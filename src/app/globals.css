@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/*
+ * Neutrale Gestaltung. Ein späteres Branding ändert nur diese Variablen
+ * (und src/config/site.ts).
+ */
+:root {
+  --background: #ffffff;
+  --surface: #f6f7f9;
+  --foreground: #111827;
+  --muted: #4b5563;
+  --border: #d1d5db;
+  --accent: #1f2937;
+  --accent-foreground: #ffffff;
+  --focus: #2563eb;
+  --ok: #166534;
+  --ok-bg: #dcfce7;
+  --warn: #92400e;
+  --warn-bg: #fef3c7;
+  --error: #991b1b;
+  --error-bg: #fee2e2;
+  --neutral-bg: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0f14;
+    --surface: #151b23;
+    --foreground: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #374151;
+    --accent: #e5e7eb;
+    --accent-foreground: #0b0f14;
+    --focus: #60a5fa;
+    --ok: #86efac;
+    --ok-bg: #14532d;
+    --warn: #fcd34d;
+    --warn-bg: #78350f;
+    --error: #fca5a5;
+    --error-bg: #7f1d1d;
+    --neutral-bg: #1f2937;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-focus: var(--focus);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-neutral-bg: var(--neutral-bg);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
