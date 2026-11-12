@@ -3,7 +3,7 @@
 Täglicher Nachrichtenticker für die Dental-Branche in Deutschland: was sich heute geändert hat
 und was es für die Praxis bedeutet. Produktbeschreibung und Entscheidungen: [`SPEC.md`](SPEC.md).
 
-## Stand: Phase 1
+## Stand: Phase 1 abgeschlossen (12.11.2026)
 
 Fertig ist das Fundament für alles Weitere:
 

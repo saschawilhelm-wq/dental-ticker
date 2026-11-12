@@ -7,7 +7,7 @@ vor der ursprünglichen Spezifikation. Neue Entscheidungen werden dort mit Numme
 
 ## Stand
 
-Phase 1 ist gebaut (Quellenabruf, Datenmodell, Admin, Magic Link). Gearbeitet wird in Phasen;
+Phase 1 ist abgeschlossen und vom Auftraggeber abgenommen (12.11.2026): Quellenabruf, Datenmodell, Redaktionsbereich, Magic Link. Gearbeitet wird in Phasen;
 jede Phase endet mit einer Vorführung und dem Okay des Auftraggebers, bevor die nächste beginnt.
 
 ## Befehle
