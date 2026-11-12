@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { AuthShell } from "@/components/auth-shell";
 import { buttonClass } from "@/components/ui";
 import { confirmLoginAction } from "../actions";
 
@@ -24,11 +25,10 @@ async function ConfirmForm({ searchParams }: { searchParams: PageProps<"/login/b
 
 export default function ConfirmLoginPage(props: PageProps<"/login/bestaetigen">) {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">Anmeldung bestätigen</h1>
+    <AuthShell title="Anmeldung bestätigen" intro="Ein Klick noch, dann sind Sie angemeldet.">
       <Suspense fallback={null}>
         <ConfirmForm searchParams={props.searchParams} />
       </Suspense>
-    </main>
+    </AuthShell>
   );
 }

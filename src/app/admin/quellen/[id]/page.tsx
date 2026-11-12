@@ -20,7 +20,7 @@ async function EditSource({ params }: { params: PageProps<"/admin/quellen/[id]">
 export default function EditSourcePage(props: PageProps<"/admin/quellen/[id]">) {
   return (
     <>
-      <PageHeader title="Quelle bearbeiten" />
+      <PageHeader eyebrow="Quellen" title="Quelle bearbeiten" />
       <Suspense fallback={<LoadingBlock />}>
         <EditSource params={props.params} />
       </Suspense>

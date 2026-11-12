@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { MailCheck } from "lucide-react";
 import { buttonClass, Field, inputClass } from "@/components/ui";
 import { requestLoginAction, type LoginFormState } from "./actions";
 
@@ -11,11 +12,12 @@ export function LoginForm() {
 
   if (state.status === "sent") {
     return (
-      <div role="status" className="rounded-md border border-border bg-surface p-4">
-        <p className="font-medium">
-          <span aria-hidden="true">✓ </span>Bitte Postfach prüfen.
+      <div role="status" className="rounded-lg bg-ok-bg p-4 text-ok">
+        <p className="flex items-center gap-2 font-semibold">
+          <MailCheck aria-hidden="true" className="size-5" />
+          Bitte Postfach prüfen.
         </p>
-        <p className="mt-1 text-muted">
+        <p className="mt-1">
           Wenn zu dieser Adresse ein Konto besteht, ist ein Anmeldelink unterwegs. Er ist 15 Minuten gültig und
           funktioniert nur einmal.
         </p>

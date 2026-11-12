@@ -11,6 +11,8 @@ export type RawItemListRow = {
   source_id: string;
   source_name: string;
   has_text: boolean;
+  /** Anfang des Rohtexts als Anriss in der Liste. */
+  teaser: string | null;
 };
 
 export type RawItemDetail = RawItemListRow & {
@@ -27,7 +29,7 @@ export type RawItemFilter = {
   sourceId?: string;
   status?: RawStatus;
   search?: string;
-  /** Inklusive, als YYYY-MM-DD in deutscher Zeit. */
+  /** Veröffentlichungsdatum, inklusive, als YYYY-MM-DD in deutscher Zeit. */
   from?: string;
   to?: string;
   page: number;
@@ -49,8 +51,9 @@ function whereClause(filter: RawItemFilter): { sql: string; params: unknown[] } 
   if (filter.sourceId) parts.push(`r.source_id = ${add(filter.sourceId)}`);
   if (filter.status) parts.push(`r.status = ${add(filter.status)}`);
   if (filter.search) parts.push(`r.title ILIKE ${add(`%${escapeLike(filter.search)}%`)}`);
-  if (filter.from) parts.push(`r.fetched_at >= (${add(filter.from)}::date AT TIME ZONE 'Europe/Berlin')`);
-  if (filter.to) parts.push(`r.fetched_at < ((${add(filter.to)}::date + 1) AT TIME ZONE 'Europe/Berlin')`);
+  // Datumsfilter nach Veröffentlichung; ohne Veröffentlichungsdatum zählt der Abrufzeitpunkt.
+  if (filter.from) parts.push(`COALESCE(r.published_at, r.fetched_at) >= (${add(filter.from)}::date AT TIME ZONE 'Europe/Berlin')`);
+  if (filter.to) parts.push(`COALESCE(r.published_at, r.fetched_at) < ((${add(filter.to)}::date + 1) AT TIME ZONE 'Europe/Berlin')`);
   return { sql: parts.length ? `WHERE ${parts.join(" AND ")}` : "", params };
 }
 
@@ -63,10 +66,10 @@ export async function listRawItems(
   const offset = Math.max(0, Math.trunc(filter.page) - 1) * limit;
   const rows = await query<RawItemListRow>(
     `SELECT r.id, r.title, r.url, r.published_at, r.fetched_at, r.status, r.source_id,
-            s.name AS source_name, (r.raw_text IS NOT NULL) AS has_text
+            s.name AS source_name, (r.raw_text IS NOT NULL) AS has_text, left(r.raw_text, 320) AS teaser
        FROM raw_items r JOIN sources s ON s.id = r.source_id
        ${where.sql}
-      ORDER BY r.fetched_at DESC, r.published_at DESC NULLS LAST, r.id
+      ORDER BY COALESCE(r.published_at, r.fetched_at) DESC, r.id
       LIMIT ${limit} OFFSET ${offset}`,
     where.params,
     db,
@@ -81,7 +84,8 @@ export async function listRawItems(
 
 export async function getRawItem(id: string, db: Queryable = getPool()): Promise<RawItemDetail | null> {
   return queryOne<RawItemDetail>(
-    `SELECT r.*, s.name AS source_name, s.kind AS source_kind, (r.raw_text IS NOT NULL) AS has_text
+    `SELECT r.*, s.name AS source_name, s.kind AS source_kind, (r.raw_text IS NOT NULL) AS has_text,
+            left(r.raw_text, 320) AS teaser
        FROM raw_items r JOIN sources s ON s.id = r.source_id
       WHERE r.id = $1`,
     [id],
@@ -91,6 +95,20 @@ export async function getRawItem(id: string, db: Queryable = getPool()): Promise
 
 export async function setRawItemStatus(id: string, status: RawStatus, db: Queryable = getPool()): Promise<void> {
   await query("UPDATE raw_items SET status = $2 WHERE id = $1", [id, status], db);
+}
+
+/** Die zuletzt veröffentlichten Einträge, für die Übersicht. */
+export async function latestRawItems(limit: number, db: Queryable = getPool()): Promise<RawItemListRow[]> {
+  return query<RawItemListRow>(
+    `SELECT r.id, r.title, r.url, r.published_at, r.fetched_at, r.status, r.source_id,
+            s.name AS source_name, (r.raw_text IS NOT NULL) AS has_text, left(r.raw_text, 320) AS teaser
+       FROM raw_items r JOIN sources s ON s.id = r.source_id
+      WHERE r.status <> 'ignored'
+      ORDER BY COALESCE(r.published_at, r.fetched_at) DESC, r.id
+      LIMIT $1`,
+    [limit],
+    db,
+  );
 }
 
 export type Overview = {

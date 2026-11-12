@@ -1,55 +1,80 @@
 @import "tailwindcss";
 
 /*
- * Neutrale Gestaltung. Ein späteres Branding ändert nur diese Variablen
- * (und src/config/site.ts).
+ * Gestaltung: ruhig, sachlich, gut lesbar — wie eine sorgfältig geführte Akte.
+ * Ein späteres Branding ändert nur diese Variablen (und src/config/site.ts).
  */
 :root {
-  --background: #ffffff;
-  --surface: #f6f7f9;
-  --foreground: #111827;
-  --muted: #4b5563;
-  --border: #d1d5db;
-  --accent: #1f2937;
+  --background: #f7f5f0;   /* warmes Papierweiß */
+  --surface: #ffffff;      /* Karten */
+  --surface-muted: #efece5;
+  --foreground: #1c2430;
+  --muted: #5b6573;
+  --subtle: #8a929e;
+  --border: #e2ddd3;
+  --border-strong: #cdc6b8;
+  --accent: #1f3a5a;       /* ruhiges Tintenblau */
   --accent-foreground: #ffffff;
+  --accent-soft: #e6ecf3;
   --focus: #2563eb;
-  --ok: #166534;
-  --ok-bg: #dcfce7;
-  --warn: #92400e;
-  --warn-bg: #fef3c7;
-  --error: #991b1b;
-  --error-bg: #fee2e2;
-  --neutral-bg: #e5e7eb;
+  --ok: #1e6b3a;
+  --ok-bg: #e3f1e7;
+  --warn: #8a4b08;
+  --warn-bg: #fbefd9;
+  --error: #9b1c1c;
+  --error-bg: #fbe5e3;
+  --neutral-bg: #ece9e2;
+  --shadow: 0 1px 2px rgb(28 36 48 / 0.04), 0 1px 1px rgb(28 36 48 / 0.03);
+  /* Gedämpfte Töne für Quellen-Kürzel: Wiedererkennung, keine Bedeutung. */
+  --tint-1-bg: #e4ecf4; --tint-1-fg: #24476b;
+  --tint-2-bg: #e6efe8; --tint-2-fg: #2c5a3a;
+  --tint-3-bg: #f1e9df; --tint-3-fg: #6e4a24;
+  --tint-4-bg: #ece6f1; --tint-4-fg: #4d3a6b;
+  --tint-5-bg: #f3e5e5; --tint-5-fg: #6f2f2f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b0f14;
-    --surface: #151b23;
-    --foreground: #e5e7eb;
-    --muted: #9ca3af;
-    --border: #374151;
-    --accent: #e5e7eb;
-    --accent-foreground: #0b0f14;
-    --focus: #60a5fa;
-    --ok: #86efac;
-    --ok-bg: #14532d;
-    --warn: #fcd34d;
-    --warn-bg: #78350f;
-    --error: #fca5a5;
-    --error-bg: #7f1d1d;
-    --neutral-bg: #1f2937;
+    --background: #12161c;
+    --surface: #1a2028;
+    --surface-muted: #202833;
+    --foreground: #e7e9ec;
+    --muted: #a4adb8;
+    --subtle: #7d8794;
+    --border: #2b3440;
+    --border-strong: #3a4553;
+    --accent: #c9d8ea;
+    --accent-foreground: #12161c;
+    --accent-soft: #233244;
+    --focus: #7cb0ff;
+    --ok: #8fd6a6;
+    --ok-bg: #173826;
+    --warn: #f3c37b;
+    --warn-bg: #3d2c12;
+    --error: #f4a3a3;
+    --error-bg: #431c1c;
+    --neutral-bg: #262e39;
+    --shadow: none;
+    --tint-1-bg: #1f3048; --tint-1-fg: #b9d0ea;
+    --tint-2-bg: #1d3426; --tint-2-fg: #b3dcc0;
+    --tint-3-bg: #3a2b1b; --tint-3-fg: #e6c9a6;
+    --tint-4-bg: #2c2340; --tint-4-fg: #d2c3ea;
+    --tint-5-bg: #3c2020; --tint-5-fg: #ecbcbc;
   }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
   --color-focus: var(--focus);
   --color-ok: var(--ok);
   --color-ok-bg: var(--ok-bg);
@@ -58,15 +83,35 @@
   --color-error: var(--error);
   --color-error-bg: var(--error-bg);
   --color-neutral-bg: var(--neutral-bg);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --shadow-card: var(--shadow);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-serif: var(--font-heading), Charter, "Iowan Old Style", Georgia, serif;
+}
+
+html {
+  font-size: 106.25%; /* 17 px Grundschrift */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  line-height: 1.6;
+  font-feature-settings: "kern", "liga";
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
+  border-radius: 4px;
 }

@@ -1,28 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { ExternalLink, Newspaper, Pencil, Plus, Power, PowerOff } from "lucide-react";
 import { countryLabels, fetchMethodLabels, sourceKindLabels } from "@/config/taxonomy";
-import { Badge, LoadingBlock, PageHeader, buttonClass, linkClass, secondaryButtonClass } from "@/components/ui";
+import { LoadingBlock, Notice, PageHeader, SourceMark, buttonClass, cardClass, linkClass, quietButtonClass } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth/session";
-import { listSources, type SourceWithStats } from "@/lib/db/sources";
-import { formatDateTime, formatInterval, hostOf } from "@/lib/format";
+import { listSources } from "@/lib/db/sources";
+import { formatInterval, formatRelative, hostOf } from "@/lib/format";
+import { SourceState } from "../source-state";
 import { toggleSourceAction } from "./actions";
 import { FetchNowButton } from "./fetch-now-button";
 
 export const metadata: Metadata = { title: "Quellen" };
 
-function SourceState({ source }: { source: SourceWithStats }) {
-  if (!source.is_active) return <Badge tone="neutral">Inaktiv</Badge>;
-  if (source.robots_allowed === false) return <Badge tone="warn">robots.txt sperrt</Badge>;
-  if (source.consecutive_failures > 0) {
-    return <Badge tone="error">{source.consecutive_failures} Fehler in Folge</Badge>;
-  }
-  if (!source.last_success_at) return <Badge tone="neutral">Noch nicht abgerufen</Badge>;
-  return <Badge tone="ok">In Ordnung</Badge>;
+function Fact({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div>
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="font-medium tabular-nums">{value}</dd>
+    </div>
+  );
 }
 
 async function SourceList({ searchParams }: { searchParams: PageProps<"/admin/quellen">["searchParams"] }) {
   await requireAdmin();
+  const now = new Date();
   const [sources, params] = await Promise.all([listSources(), searchParams]);
   const savedId = typeof params.gespeichert === "string" ? params.gespeichert : null;
   const saved = sources.find((s) => s.id === savedId);
@@ -30,66 +32,69 @@ async function SourceList({ searchParams }: { searchParams: PageProps<"/admin/qu
   return (
     <>
       {saved ? (
-        <p role="status" className="mb-4 rounded-md bg-ok-bg p-3 text-ok">
-          <span aria-hidden="true">✓ </span>„{saved.name}“ gespeichert.
-        </p>
+        <div className="mb-6">
+          <Notice tone="ok">„{saved.name}“ gespeichert.</Notice>
+        </div>
       ) : null}
-      <ul className="flex flex-col gap-4">
+      <ul className="grid gap-5 lg:grid-cols-2">
         {sources.map((source) => (
-          <li key={source.id} className="rounded-lg border border-border p-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="text-lg font-semibold">{source.name}</h2>
-                <p className="text-sm text-muted">
-                  {sourceKindLabels[source.kind]} · Stufe {source.trust_level} · {countryLabels[source.country]} ·{" "}
-                  {fetchMethodLabels[source.fetch_method]} alle {formatInterval(source.fetch_interval_min)}
-                </p>
-                <p className="mt-1 break-all text-sm">
-                  {source.feed_url ? (
-                    <a href={source.feed_url} className={linkClass} target="_blank" rel="noopener noreferrer">
-                      {hostOf(source.feed_url)}
-                    </a>
-                  ) : (
-                    <span className="text-muted">Kein Feed hinterlegt</span>
-                  )}
+          <li key={source.id} className={`${cardClass} flex flex-col p-5 sm:p-6 ${source.is_active ? "" : "opacity-80"}`}>
+            <div className="flex items-start gap-4">
+              <SourceMark name={source.name} />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h2 className="font-serif text-xl font-semibold leading-snug">{source.name}</h2>
+                  <SourceState source={source} />
+                </div>
+                <p className="mt-1 text-sm text-muted">
+                  {sourceKindLabels[source.kind]} · Stufe {source.trust_level} · {countryLabels[source.country]}
                 </p>
               </div>
-              <SourceState source={source} />
             </div>
 
-            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
-              <div>
-                <dt className="text-muted">Letzter Erfolg</dt>
-                <dd>{formatDateTime(source.last_success_at)}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Letzter Versuch</dt>
-                <dd>{formatDateTime(source.last_fetched_at)}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Einträge (7 Tage)</dt>
-                <dd className="tabular-nums">{source.items_last_7d}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Einträge gesamt</dt>
-                <dd className="tabular-nums">{source.item_count}</dd>
-              </div>
+            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-y border-border py-4 sm:grid-cols-4">
+              <Fact label="Abruf" value={`alle ${formatInterval(source.fetch_interval_min)}`} />
+              <Fact label="Zuletzt erfolgreich" value={formatRelative(source.last_success_at, now)} />
+              <Fact label="Neu (7 Tage)" value={source.items_last_7d} />
+              <Fact label="Gesamt" value={source.item_count} />
             </dl>
-            {source.terms_note ? <p className="mt-3 text-sm text-muted">{source.terms_note}</p> : null}
 
-            <div className="mt-4 flex flex-wrap items-start gap-2">
+            <div className="mt-4 flex flex-col gap-2 text-sm">
+              <p className="flex flex-wrap items-center gap-x-2 text-muted">
+                {fetchMethodLabels[source.fetch_method]}:
+                {source.feed_url ? (
+                  <a href={source.feed_url} className={`inline-flex items-center gap-1 ${linkClass}`} target="_blank" rel="noopener noreferrer">
+                    {hostOf(source.feed_url)}
+                    <ExternalLink aria-hidden="true" className="size-3.5" />
+                  </a>
+                ) : (
+                  <span>kein Feed hinterlegt</span>
+                )}
+              </p>
+              {source.terms_note ? <p className="max-w-[65ch] text-muted">{source.terms_note}</p> : null}
+            </div>
+
+            <div className="mt-auto flex flex-wrap items-start gap-1 pt-5">
               <FetchNowButton sourceId={source.id} disabled={source.fetch_method !== "rss" || !source.feed_url} />
-              <Link href={`/admin/quellen/${source.id}`} className={secondaryButtonClass}>
-                Bearbeiten
+              <Link href={`/admin/rohdaten?quelle=${source.id}`} className={quietButtonClass}>
+                <Newspaper aria-hidden="true" className="size-4" /> Meldungen
               </Link>
-              <Link href={`/admin/rohdaten?quelle=${source.id}`} className={secondaryButtonClass}>
-                Rohdaten
+              <Link href={`/admin/quellen/${source.id}`} className={quietButtonClass}>
+                <Pencil aria-hidden="true" className="size-4" /> Bearbeiten
               </Link>
               <form action={toggleSourceAction}>
                 <input type="hidden" name="id" value={source.id} />
                 <input type="hidden" name="active" value={source.is_active ? "false" : "true"} />
-                <button type="submit" className={secondaryButtonClass}>
-                  {source.is_active ? "Deaktivieren" : "Aktivieren"}
+                <button type="submit" className={quietButtonClass}>
+                  {source.is_active ? (
+                    <>
+                      <PowerOff aria-hidden="true" className="size-4" /> Deaktivieren
+                    </>
+                  ) : (
+                    <>
+                      <Power aria-hidden="true" className="size-4" /> Aktivieren
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -103,9 +108,13 @@ async function SourceList({ searchParams }: { searchParams: PageProps<"/admin/qu
 export default function SourcesPage(props: PageProps<"/admin/quellen">) {
   return (
     <>
-      <PageHeader title="Quellen">
+      <PageHeader
+        eyebrow="Woher die Meldungen kommen"
+        title="Quellen"
+        description="Primärquellen werden alle 30 Minuten abgerufen. Vor jedem Abruf wird geprüft, ob die Website ihn erlaubt."
+      >
         <Link href="/admin/quellen/neu" className={buttonClass}>
-          Quelle hinzufügen
+          <Plus aria-hidden="true" className="size-4" /> Quelle hinzufügen
         </Link>
       </PageHeader>
       <Suspense fallback={<LoadingBlock />}>

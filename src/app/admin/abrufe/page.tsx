@@ -2,73 +2,79 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { fetchRunStatusLabels } from "@/config/taxonomy";
-import { Badge, LoadingBlock, PageHeader, secondaryButtonClass } from "@/components/ui";
+import { Badge, EmptyState, LoadingBlock, PageHeader, cardClass } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth/session";
 import { listFetchRuns } from "@/lib/db/fetch-runs";
 import { listSources } from "@/lib/db/sources";
-import { formatDateTime, formatDuration } from "@/lib/format";
+import { formatDayHeading, formatDuration, formatTime, groupByDay } from "@/lib/format";
 import { parseRunQuery } from "@/lib/validation/filters";
 import { runTone } from "../status";
 
 export const metadata: Metadata = { title: "Abrufprotokoll" };
 
+function FilterTab({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`inline-flex min-h-11 items-center rounded-full px-4 text-[0.95rem] ${
+        active ? "bg-accent font-medium text-accent-foreground" : "border border-border-strong bg-surface hover:bg-surface-muted"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
 async function Runs({ searchParams }: { searchParams: PageProps<"/admin/abrufe">["searchParams"] }) {
   await requireAdmin();
+  const now = new Date();
   const query = parseRunQuery(await searchParams);
   const [runs, sources] = await Promise.all([listFetchRuns({ ...query, limit: 200 }), listSources()]);
   const sourceName = sources.find((s) => s.id === query.sourceId)?.name;
+  const groups = groupByDay(runs, (run) => new Date(run.started_at));
 
   return (
     <>
-      <div className="mb-4 flex flex-wrap gap-2">
-        <Link href="/admin/abrufe" aria-current={!query.onlyProblems && !query.sourceId ? "page" : undefined} className={secondaryButtonClass}>
-          Alle
-        </Link>
-        <Link href="/admin/abrufe?nur=probleme" aria-current={query.onlyProblems ? "page" : undefined} className={secondaryButtonClass}>
-          Nur Probleme
-        </Link>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <FilterTab href="/admin/abrufe" active={!query.onlyProblems && !query.sourceId}>Alle</FilterTab>
+        <FilterTab href="/admin/abrufe?nur=probleme" active={query.onlyProblems}>Nur Probleme</FilterTab>
+        {sourceName ? <span className="text-sm text-muted">Gefiltert auf: {sourceName}</span> : null}
       </div>
-      {sourceName ? <p className="mb-3 text-sm text-muted">Gefiltert auf: {sourceName}</p> : null}
       {runs.length === 0 ? (
-        <p className="rounded-lg border border-border p-6 text-muted">Noch keine Abrufe protokolliert.</p>
+        <EmptyState>{query.onlyProblems ? "Keine Probleme protokolliert." : "Noch keine Abrufe protokolliert."}</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <caption className="sr-only">Die letzten 200 Abrufe</caption>
-            <thead className="bg-surface">
-              <tr>
-                <th scope="col" className="p-3">Zeitpunkt</th>
-                <th scope="col" className="p-3">Quelle</th>
-                <th scope="col" className="p-3">Ergebnis</th>
-                <th scope="col" className="p-3 text-right">Gesehen</th>
-                <th scope="col" className="p-3 text-right">Neu</th>
-                <th scope="col" className="p-3">Dauer</th>
-                <th scope="col" className="p-3">Hinweis</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {runs.map((run) => (
-                <tr key={run.id}>
-                  <td className="whitespace-nowrap p-3">{formatDateTime(run.started_at)}</td>
-                  <td className="p-3">
-                    <Link href={`/admin/abrufe?quelle=${run.source_id}`} className="underline-offset-2 hover:underline">
+        <div className="flex flex-col gap-10">
+          {groups.map((group) => (
+            <section key={group.key} aria-labelledby={`lauf-${group.key}`}>
+              <h2 id={`lauf-${group.key}`} className="mb-3 font-serif text-xl font-semibold">
+                {formatDayHeading(group.date, now)}
+              </h2>
+              <ul className={`${cardClass} divide-y divide-border`}>
+                {group.items.map((run) => (
+                  <li key={run.id} className="grid gap-x-4 gap-y-1 px-4 py-3 sm:grid-cols-[4rem_minmax(0,14rem)_minmax(0,1fr)_auto] sm:items-center sm:px-6">
+                    <span className="text-sm tabular-nums text-muted">{formatTime(run.started_at)}</span>
+                    <Link href={`/admin/abrufe?quelle=${run.source_id}`} className="truncate font-medium hover:underline">
                       {run.source_name}
                     </Link>
-                  </td>
-                  <td className="p-3">
-                    <Badge tone={runTone(run.status)}>
-                      {fetchRunStatusLabels[run.status]}
-                      {run.http_status ? ` (${run.http_status})` : ""}
-                    </Badge>
-                  </td>
-                  <td className="p-3 text-right tabular-nums">{run.items_seen}</td>
-                  <td className="p-3 text-right tabular-nums">{run.items_new}</td>
-                  <td className="whitespace-nowrap p-3">{formatDuration(run.started_at, run.finished_at)}</td>
-                  <td className="p-3 text-muted">{run.error ?? ""}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                      <Badge tone={runTone(run.status)}>
+                        {fetchRunStatusLabels[run.status]}
+                        {run.http_status ? ` (${run.http_status})` : ""}
+                      </Badge>
+                      {run.status === "ok" ? (
+                        <span className="text-muted">
+                          {run.items_new > 0 ? <strong className="font-semibold text-foreground">{run.items_new} neu</strong> : "nichts Neues"} · {run.items_seen} gesehen
+                        </span>
+                      ) : null}
+                      {run.error ? <span className="text-muted">{run.error}</span> : null}
+                    </span>
+                    <span className="text-sm tabular-nums text-subtle sm:text-right">{formatDuration(run.started_at, run.finished_at)}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
         </div>
       )}
     </>
@@ -78,7 +84,11 @@ async function Runs({ searchParams }: { searchParams: PageProps<"/admin/abrufe">
 export default function RunsPage(props: PageProps<"/admin/abrufe">) {
   return (
     <>
-      <PageHeader title="Abrufprotokoll" />
+      <PageHeader
+        eyebrow="Technik"
+        title="Abrufprotokoll"
+        description="Jeder Abruf einer Quelle, mit Ergebnis. Die letzten 200 Einträge."
+      />
       <Suspense fallback={<LoadingBlock />}>
         <Runs searchParams={props.searchParams} />
       </Suspense>

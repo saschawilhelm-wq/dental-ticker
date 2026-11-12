@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { History, LayoutDashboard, Newspaper, Rss, type LucideIcon } from "lucide-react";
 
-const items = [
-  { href: "/admin", label: "Übersicht" },
-  { href: "/admin/quellen", label: "Quellen" },
-  { href: "/admin/rohdaten", label: "Rohdaten" },
-  { href: "/admin/abrufe", label: "Abrufprotokoll" },
-] as const;
+const items: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/admin", label: "Übersicht", icon: LayoutDashboard },
+  { href: "/admin/rohdaten", label: "Meldungen", icon: Newspaper },
+  { href: "/admin/quellen", label: "Quellen", icon: Rss },
+  { href: "/admin/abrufe", label: "Abrufprotokoll", icon: History },
+];
 
 /** Aktueller Pfad steht erst zur Laufzeit fest; bis dahin ohne Hervorhebung. */
 export function AdminNav() {
@@ -17,21 +18,23 @@ export function AdminNav() {
 
 export function NavLinks({ pathname }: { pathname: string | null }) {
   return (
-    <nav aria-label="Admin-Bereich">
-      <ul className="flex flex-wrap gap-1">
-        {items.map((item) => {
-          const active =
-            pathname !== null && (item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href));
+    <nav aria-label="Admin-Bereich" className="-mb-px overflow-x-auto">
+      <ul className="flex gap-1">
+        {items.map(({ href, label, icon: Icon }) => {
+          const active = pathname !== null && (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
           return (
-            <li key={item.href}>
+            <li key={href}>
               <Link
-                href={item.href}
+                href={href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-11 items-center rounded-md px-3 ${
-                  active ? "bg-accent font-semibold text-accent-foreground" : "hover:bg-surface"
+                className={`inline-flex min-h-12 items-center gap-2 whitespace-nowrap border-b-2 px-3 text-[0.95rem] transition-colors ${
+                  active
+                    ? "border-accent font-semibold text-foreground"
+                    : "border-transparent text-muted hover:border-border-strong hover:text-foreground"
                 }`}
               >
-                {item.label}
+                <Icon aria-hidden="true" className="size-4" />
+                {label}
               </Link>
             </li>
           );

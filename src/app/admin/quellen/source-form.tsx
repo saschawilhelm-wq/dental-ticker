@@ -12,7 +12,7 @@ import {
   trustLevelLabels,
   trustLevels,
 } from "@/config/taxonomy";
-import { buttonClass, Field, inputClass, secondaryButtonClass } from "@/components/ui";
+import { buttonClass, cardClass, Field, inputClass, Notice, secondaryButtonClass } from "@/components/ui";
 import type { Source } from "@/lib/db/sources";
 import { saveSourceAction, type SourceFormState } from "./actions";
 
@@ -33,14 +33,9 @@ export function SourceForm({ source }: Props) {
   const invalid = (key: keyof typeof e) => (e[key] ? { "aria-invalid": true, "aria-describedby": `${key}-error` } : {});
 
   return (
-    <form action={formAction} className="flex max-w-2xl flex-col gap-5" noValidate>
+    <form action={formAction} className={`${cardClass} flex max-w-3xl flex-col gap-6 p-5 sm:p-8`} noValidate>
       {source ? <input type="hidden" name="id" value={source.id} /> : null}
-      {e.form ? (
-        <p role="alert" className="rounded-md bg-error-bg p-3 text-error">
-          <span aria-hidden="true">✕ </span>
-          {e.form}
-        </p>
-      ) : null}
+      {e.form ? <Notice tone="error">{e.form}</Notice> : null}
 
       <Field label="Name" htmlFor="name" error={e.name}>
         <input id="name" name="name" defaultValue={val("name", source?.name)} required className={inputClass} {...invalid("name")} />
@@ -58,7 +53,7 @@ export function SourceForm({ source }: Props) {
         <input id="feedUrl" name="feedUrl" type="url" defaultValue={val("feedUrl", source?.feed_url)} className={inputClass} {...invalid("feedUrl")} />
       </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-6 border-y border-border py-6 sm:grid-cols-2">
         <Field label="Abrufart" htmlFor="fetchMethod" error={e.fetchMethod} hint="In Phase 1 wird nur RSS automatisch abgerufen.">
           <select id="fetchMethod" name="fetchMethod" defaultValue={val("fetchMethod", source?.fetch_method ?? "rss")} className={inputClass}>
             {fetchMethods.map((m) => (
@@ -105,7 +100,7 @@ export function SourceForm({ source }: Props) {
         <span>Aktiv — wird nach Intervall automatisch abgerufen</span>
       </label>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 pt-2">
         <button type="submit" className={buttonClass} disabled={pending}>
           {pending ? "Speichert …" : "Speichern"}
         </button>

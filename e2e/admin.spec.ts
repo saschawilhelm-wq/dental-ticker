@@ -56,12 +56,13 @@ test("Admin meldet sich an, sieht Quellen und filtert Rohdaten", async ({ page }
 
   await page.getByRole("link", { name: "Quellen", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Testbehörde" })).toBeVisible();
-  await expect(page.getByText("In Ordnung")).toBeVisible();
+  // Die vorige Seite bleibt (verborgen) im DOM erhalten, daher nur sichtbare Treffer.
+  await expect(page.getByText("In Ordnung").filter({ visible: true })).toBeVisible();
 
   await page.goto("/admin/rohdaten");
   await expect(page.getByText("3 Einträge")).toBeVisible();
   await page.getByLabel("Suche im Titel").fill("ePA");
-  await page.getByRole("button", { name: "Filtern" }).click();
+  await page.getByRole("button", { name: "Suchen" }).click();
   await expect(page.getByText("1 Einträge")).toBeVisible();
   await page.getByRole("link", { name: /ePA in Zahnarztpraxen/ }).click();
   await expect(page.getByText("Rohtext 2")).toBeVisible();
