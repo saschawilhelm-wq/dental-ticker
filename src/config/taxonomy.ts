@@ -15,23 +15,27 @@ export const roleLabels: Record<Role, string> = {
 
 export const categories = [
   "recht_politik",
+  "gkv_pkv",
   "abrechnung",
   "telematik",
   "hygiene_mp",
   "wissenschaft",
   "praxisfuehrung",
   "markt_industrie",
+  "fortbildung",
   "standespolitik",
 ] as const;
 export type Category = (typeof categories)[number];
 export const categoryLabels: Record<Category, string> = {
   recht_politik: "Recht & Politik",
+  gkv_pkv: "Gesundheitspolitik GKV & PKV",
   abrechnung: "Abrechnung",
   telematik: "Telematik & Digitalisierung",
   hygiene_mp: "Hygiene & Medizinprodukte",
   wissenschaft: "Wissenschaft & Leitlinien",
   praxisfuehrung: "Praxisführung",
-  markt_industrie: "Markt & Industrie",
+  markt_industrie: "Industrie & Handel",
+  fortbildung: "Fortbildung & Veranstaltungen",
   standespolitik: "Standespolitik",
 };
 
@@ -93,3 +97,67 @@ export const fetchRunStatusLabels: Record<FetchRunStatus, string> = {
 
 export const appRoles = ["user", "editor", "admin"] as const;
 export type AppRole = (typeof appRoles)[number];
+
+/** Kurzbeschreibung je Kategorie — wird der KI als Einordnungshilfe gegeben. */
+export const categoryHints: Record<Category, string> = {
+  recht_politik: "Gesetze, Verordnungen, G-BA-Beschlüsse, Datenschutz- und Berufsrecht, soweit nicht GKV/PKV-Finanzierung",
+  gkv_pkv: "Gesetzliche und private Krankenversicherung: Finanzierung, Budgetierung, Leistungen, Gesetzesvorhaben dazu",
+  abrechnung: "BEMA, GOZ, Punktwerte, Analogberechnung, Urteile zur Abrechnung",
+  telematik: "TI, ePA, eRezept, KIM, gematik-Fristen und -Störungen, Sanktionen",
+  hygiene_mp: "RKI/KRINKO, Hygiene, Medizinprodukte, Rückrufe, Sicherheitswarnungen, MDR",
+  wissenschaft: "Leitlinien (AWMF), Studien, Fachgesellschaften",
+  praxisfuehrung: "Personal, Arbeitsrecht, Steuern, Organisation, Fachkräftemangel",
+  markt_industrie: "Hersteller, Depots, Großhandel, Dienstleister, Produkte, Übernahmen",
+  fortbildung: "Messen, Kongresse, Fortbildungen, Veranstaltungen",
+  standespolitik: "BZÄK, KZBV, Kammern, KZVen, Wahlen, Verbandspositionen",
+};
+
+export const actionLevels = ["keiner", "beobachten", "handeln"] as const;
+export type ActionLevel = (typeof actionLevels)[number];
+export const actionLevelLabels: Record<ActionLevel, string> = {
+  keiner: "Kein Handlungsbedarf",
+  beobachten: "Beobachten",
+  handeln: "Handeln",
+};
+
+export const certainties = ["offiziell", "berichtet", "unbestaetigt"] as const;
+export type Certainty = (typeof certainties)[number];
+export const certaintyLabels: Record<Certainty, string> = {
+  offiziell: "Offiziell",
+  berichtet: "Berichtet",
+  unbestaetigt: "Unbestätigt",
+};
+
+export const storyStatuses = ["draft", "in_review", "published", "blocked", "archived"] as const;
+export type StoryStatus = (typeof storyStatuses)[number];
+export const storyStatusLabels: Record<StoryStatus, string> = {
+  draft: "In Bearbeitung",
+  in_review: "Zur Prüfung",
+  published: "Veröffentlicht",
+  blocked: "Gesperrt",
+  archived: "Archiviert",
+};
+
+export const checkStatuses = ["offen", "bestanden", "abweichung"] as const;
+export type CheckStatus = (typeof checkStatuses)[number];
+export const checkStatusLabels: Record<CheckStatus, string> = {
+  offen: "Nicht geprüft",
+  bestanden: "KI-Prüfung bestanden",
+  abweichung: "Abweichung gefunden",
+};
+
+/* Fakten, die die KI je Meldung feststellt (SPEC 1.1). */
+export const affectedness = ["direkt", "indirekt", "keine"] as const;
+export type Affectedness = (typeof affectedness)[number];
+export const obligations = ["pflicht", "empfehlung", "information"] as const;
+export type Obligation = (typeof obligations)[number];
+export const moneyKinds = ["honorar", "kosten", "sanktion", "keins"] as const;
+export type MoneyKind = (typeof moneyKinds)[number];
+export const bindingness = ["entwurf", "beschlossen", "in_kraft", "nicht_anwendbar"] as const;
+export type Bindingness = (typeof bindingness)[number];
+export const bindingnessLabels: Record<Bindingness, string> = {
+  entwurf: "Entwurf",
+  beschlossen: "Beschlossen",
+  in_kraft: "In Kraft",
+  nicht_anwendbar: "—",
+};

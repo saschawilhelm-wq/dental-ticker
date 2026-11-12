@@ -14,9 +14,11 @@
     "worker": "tsx --env-file-if-exists=.env.local worker/index.ts",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
-    "admin:create": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts"
+    "admin:create": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts",
+    "ai:check": "tsx --env-file-if-exists=.env.local scripts/ai-check.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "fast-xml-parser": "^5.12.0",
     "he": "^2.0.0",
     "lucide-react": "^1.72.0",

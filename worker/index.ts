@@ -5,12 +5,18 @@
  *   npm run worker -- --once  # genau ein Durchlauf, z. B. für Cron
  */
 import { ingestConfig } from "@/config/ingest";
+import { aiApiKey, ClaudeClient, type AiClient } from "@/lib/ai/client";
 import { closePool, getPool } from "@/lib/db/pool";
 import { defaultIngestDeps } from "@/lib/ingest/run-source";
 import { runTick } from "@/lib/ingest/scheduler";
+import { runPipelineTick } from "@/lib/pipeline/process";
 
 const once = process.argv.includes("--once");
 let stopping = false;
+
+/** KI-Auswertung läuft nur, wenn ein Schlüssel hinterlegt ist (DENTAL_TICKER_ANTHROPIC_API_KEY). */
+const apiKey = aiApiKey();
+const ai: AiClient | null = apiKey ? new ClaudeClient(apiKey) : null;
 
 function log(message: string, data?: unknown) {
   const line = { time: new Date().toISOString(), message, ...(data ? { data } : {}) };
@@ -24,10 +30,20 @@ async function tick() {
   } catch (error) {
     log("tick failed", { error: (error as Error).message });
   }
+  if (!ai) return;
+  try {
+    const pipeline = await runPipelineTick({ pool: getPool(), ai, now: () => new Date() });
+    if (pipeline.outcomes.length > 0 || pipeline.skippedBudget) log("pipeline", pipeline);
+  } catch (error) {
+    log("pipeline failed", { error: (error as Error).message });
+  }
 }
 
 async function main() {
-  log(once ? "worker: einmaliger Durchlauf" : "worker gestartet", { tickMs: ingestConfig.schedulerTickMs });
+  log(once ? "worker: einmaliger Durchlauf" : "worker gestartet", {
+    tickMs: ingestConfig.schedulerTickMs,
+    ki: ai ? "aktiv" : "inaktiv (kein DENTAL_TICKER_ANTHROPIC_API_KEY)",
+  });
   await tick();
   while (!once && !stopping) {
     await new Promise((resolve) => setTimeout(resolve, ingestConfig.schedulerTickMs));
