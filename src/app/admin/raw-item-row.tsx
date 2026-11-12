@@ -9,7 +9,7 @@ import { rawTone } from "./status";
 export function RawItemRow({ item, showTeaser = true }: { item: RawItemListRow; showTeaser?: boolean }) {
   const when = item.published_at ?? item.fetched_at;
   return (
-    <article className="group relative flex gap-4 px-4 py-5 transition-colors hover:bg-surface-muted/60 sm:px-6">
+    <article className="group relative flex gap-4 px-4 py-6 transition-colors duration-300 hover:bg-surface-muted sm:px-7">
       <SourceMark name={item.source_name} />
       <div className="min-w-0 flex-1">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
@@ -27,7 +27,7 @@ export function RawItemRow({ item, showTeaser = true }: { item: RawItemListRow; 
           </Link>
         </h3>
         {showTeaser && item.teaser ? (
-          <p className="mt-1.5 line-clamp-2 max-w-[70ch] text-[0.95rem] text-muted">{item.teaser}</p>
+          <p className="mt-2 line-clamp-2 max-w-[68ch] leading-relaxed text-[0.95rem] text-muted">{item.teaser}</p>
         ) : null}
       </div>
     </article>

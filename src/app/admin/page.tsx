@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Übersicht" };
 
 function Stat({ label, value, href, icon: Icon, hint }: { label: string; value: number; href: string; icon: LucideIcon; hint?: string }) {
   return (
-    <Link href={href} className={`${cardClass} group flex flex-col gap-3 p-5 transition-colors hover:border-border-strong`}>
+    <Link href={href} className={`${cardClass} group flex flex-col gap-3 p-5 transition-colors duration-300 hover:border-border-strong`}>
       <span className="flex items-center justify-between text-sm text-muted">
         {label}
         <Icon aria-hidden="true" className="size-5 text-subtle group-hover:text-foreground" />

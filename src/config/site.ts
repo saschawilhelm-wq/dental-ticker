@@ -11,8 +11,8 @@ export const site = {
   description:
     "Täglicher Nachrichtenticker für die Dental-Branche: was sich heute geändert hat und was es für die Praxis bedeutet.",
   /** Hintergrund- und Themenfarbe für das PWA-Manifest (neutral). */
-  manifestBackground: "#f7f5f0",
-  manifestTheme: "#1f3a5a",
+  manifestBackground: "#f1ebe1",
+  manifestTheme: "#3d5550",
   locale: "de-DE",
   timeZone: "Europe/Berlin",
 } as const;

@@ -27,7 +27,7 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-12 items-center gap-2 whitespace-nowrap border-b-2 px-3 text-[0.95rem] transition-colors ${
+                className={`inline-flex min-h-12 items-center gap-2 whitespace-nowrap border-b-2 px-3 text-[0.95rem] transition-colors duration-300 ${
                   active
                     ? "border-accent font-semibold text-foreground"
                     : "border-transparent text-muted hover:border-border-strong hover:text-foreground"

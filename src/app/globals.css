@@ -1,65 +1,74 @@
 @import "tailwindcss";
 
 /*
- * Gestaltung: ruhig, sachlich, gut lesbar — wie eine sorgfältig geführte Akte.
+ * Gestaltung: warm, ruhig, gut lesbar — wie eine sorgfältig geführte Akte.
+ * Nichts blinkt, nichts drängt: Übergänge sind langsam, Flächen nie reinweiß.
  * Ein späteres Branding ändert nur diese Variablen (und src/config/site.ts).
  */
 :root {
-  --background: #f7f5f0;   /* warmes Papierweiß */
-  --surface: #ffffff;      /* Karten */
-  --surface-muted: #efece5;
-  --foreground: #1c2430;
-  --muted: #5b6573;
-  --subtle: #8a929e;
-  --border: #e2ddd3;
-  --border-strong: #cdc6b8;
-  --accent: #1f3a5a;       /* ruhiges Tintenblau */
-  --accent-foreground: #ffffff;
-  --accent-soft: #e6ecf3;
-  --focus: #2563eb;
-  --ok: #1e6b3a;
-  --ok-bg: #e3f1e7;
-  --warn: #8a4b08;
-  --warn-bg: #fbefd9;
-  --error: #9b1c1c;
-  --error-bg: #fbe5e3;
-  --neutral-bg: #ece9e2;
-  --shadow: 0 1px 2px rgb(28 36 48 / 0.04), 0 1px 1px rgb(28 36 48 / 0.03);
-  /* Gedämpfte Töne für Quellen-Kürzel: Wiedererkennung, keine Bedeutung. */
-  --tint-1-bg: #e4ecf4; --tint-1-fg: #24476b;
-  --tint-2-bg: #e6efe8; --tint-2-fg: #2c5a3a;
-  --tint-3-bg: #f1e9df; --tint-3-fg: #6e4a24;
-  --tint-4-bg: #ece6f1; --tint-4-fg: #4d3a6b;
-  --tint-5-bg: #f3e5e5; --tint-5-fg: #6f2f2f;
+  /* Warmes Leinen als Grund, Creme statt Reinweiß für Flächen. */
+  --background: #f1ebe1;
+  --surface: #fbf7f0;
+  --surface-muted: #f3ecdf;
+  --foreground: #2d2924;   /* warmes Dunkelbraun-Grau statt Schwarz */
+  --muted: #6a6157;
+  --subtle: #8c8276;
+  --border: #e6dccc;
+  --border-strong: #d6cab8;
+  --input-border: #8f8372; /* Eingabefelder: mind. 3:1 Kontrast */
+  --accent: #3d5550;       /* ruhiges, dunkles Salbeigrün */
+  --accent-foreground: #fbf7f0;
+  --accent-soft: #e3e9e4;
+  --focus: #2f6fb0;
+  --ok: #2f6a3f;
+  --ok-bg: #e4eedd;
+  --warn: #8a4b10;
+  --warn-bg: #f6e6cc;
+  --error: #9a2b23;
+  --error-bg: #f6e0da;
+  --neutral-bg: #e9e1d4;
+  --shadow: 0 1px 3px rgb(90 66 30 / 0.06), 0 1px 1px rgb(90 66 30 / 0.04);
+  /* Leichte Papierkörnung, kaum sichtbar. Als eingebettetes SVG, kein Bild von außen. */
+  --paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.33 0 0 0 0 0.2 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  --paper-surface: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.33 0 0 0 0 0.2 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  /* Gedämpfte, warme Töne für Quellen-Kürzel: Wiedererkennung, keine Bedeutung. */
+  --tint-1-bg: #e3e9e4; --tint-1-fg: #34504a;
+  --tint-2-bg: #ece6d6; --tint-2-fg: #5c5126;
+  --tint-3-bg: #f1e2d3; --tint-3-fg: #73452a;
+  --tint-4-bg: #e9e2ea; --tint-4-fg: #55405a;
+  --tint-5-bg: #f1dfdb; --tint-5-fg: #713832;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #12161c;
-    --surface: #1a2028;
-    --surface-muted: #202833;
-    --foreground: #e7e9ec;
-    --muted: #a4adb8;
-    --subtle: #7d8794;
-    --border: #2b3440;
-    --border-strong: #3a4553;
-    --accent: #c9d8ea;
-    --accent-foreground: #12161c;
-    --accent-soft: #233244;
-    --focus: #7cb0ff;
-    --ok: #8fd6a6;
-    --ok-bg: #173826;
-    --warn: #f3c37b;
-    --warn-bg: #3d2c12;
-    --error: #f4a3a3;
-    --error-bg: #431c1c;
-    --neutral-bg: #262e39;
+    --background: #1b1915;
+    --surface: #24211c;
+    --surface-muted: #2c2822;
+    --foreground: #ece5da;
+    --muted: #b3a998;
+    --subtle: #8f8678;
+    --border: #36312a;
+    --border-strong: #4a443b;
+    --input-border: #857b6c;
+    --accent: #a9c3bb;
+    --accent-foreground: #1b1915;
+    --accent-soft: #2b3734;
+    --focus: #8ab8ea;
+    --ok: #9bd3a7;
+    --ok-bg: #1f3324;
+    --warn: #f0c584;
+    --warn-bg: #3b2b15;
+    --error: #f1a89e;
+    --error-bg: #42201b;
+    --neutral-bg: #312c25;
     --shadow: none;
-    --tint-1-bg: #1f3048; --tint-1-fg: #b9d0ea;
-    --tint-2-bg: #1d3426; --tint-2-fg: #b3dcc0;
-    --tint-3-bg: #3a2b1b; --tint-3-fg: #e6c9a6;
-    --tint-4-bg: #2c2340; --tint-4-fg: #d2c3ea;
-    --tint-5-bg: #3c2020; --tint-5-fg: #ecbcbc;
+    --paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+    --paper-surface: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+    --tint-1-bg: #2b3734; --tint-1-fg: #b7d2c8;
+    --tint-2-bg: #36311f; --tint-2-fg: #dccf9c;
+    --tint-3-bg: #3b2a1e; --tint-3-fg: #e8c2a2;
+    --tint-4-bg: #33293a; --tint-4-fg: #d8c2df;
+    --tint-5-bg: #3d2420; --tint-5-fg: #ecbab1;
   }
 }
 
@@ -72,6 +81,7 @@
   --color-subtle: var(--subtle);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-input: var(--input-border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
@@ -93,9 +103,10 @@ html {
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: var(--paper);
   color: var(--foreground);
-  line-height: 1.6;
+  line-height: 1.7;
   font-feature-settings: "kern", "liga";
   text-rendering: optimizeLegibility;
 }
@@ -114,4 +125,18 @@ p {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Karten bekommen dieselbe Körnung, noch zarter. */
+.paper {
+  background-image: var(--paper-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
 }

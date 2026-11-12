@@ -4,15 +4,15 @@ import { sourceMonogram, sourceTint } from "@/lib/format";
 
 /** Gemeinsame Klassen, damit Bedienelemente überall gleich aussehen (min. 44 px hoch). */
 export const buttonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-4 text-[0.95rem] font-medium text-accent-foreground shadow-card transition-opacity hover:opacity-90 disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-4 text-[0.95rem] font-medium text-accent-foreground shadow-card transition-opacity duration-300 hover:opacity-90 disabled:opacity-60";
 export const secondaryButtonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border-strong bg-surface px-4 text-[0.95rem] font-medium text-foreground transition-colors hover:bg-surface-muted disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-input bg-surface px-4 text-[0.95rem] font-medium text-foreground transition-colors duration-300 hover:bg-surface-muted disabled:opacity-60";
 export const quietButtonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 text-[0.95rem] font-medium text-muted transition-colors hover:bg-surface-muted hover:text-foreground disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 text-[0.95rem] font-medium text-muted transition-colors duration-300 hover:bg-surface-muted hover:text-foreground disabled:opacity-60";
 export const inputClass =
-  "min-h-11 w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-foreground placeholder:text-subtle aria-[invalid=true]:border-error";
+  "min-h-11 w-full rounded-lg border border-input bg-surface px-3 py-2 text-foreground placeholder:text-subtle aria-[invalid=true]:border-error";
 export const linkClass = "underline decoration-border-strong decoration-1 underline-offset-4 hover:decoration-current";
-export const cardClass = "rounded-xl border border-border bg-surface shadow-card";
+export const cardClass = "paper rounded-xl border border-border bg-surface shadow-card";
 
 type Tone = "ok" | "warn" | "error" | "neutral";
 
@@ -146,7 +146,7 @@ export function LoadingBlock({ label = "Wird geladen …" }: { label?: string })
   return (
     <div role="status" className="flex flex-col gap-3" aria-label={label}>
       {[0, 1, 2].map((i) => (
-        <div key={i} className={`${cardClass} h-24 animate-pulse bg-surface-muted`} />
+        <div key={i} className={`${cardClass} h-24 bg-surface-muted`} />
       ))}
       <span className="sr-only">{label}</span>
     </div>
