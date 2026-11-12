@@ -7,7 +7,9 @@ vor der ursprünglichen Spezifikation. Neue Entscheidungen werden dort mit Numme
 
 ## Stand
 
-Phase 1 ist abgeschlossen und vom Auftraggeber abgenommen (12.11.2026): Quellenabruf, Datenmodell, Redaktionsbereich, Magic Link. Gearbeitet wird in Phasen;
+Phase 1 ist abgeschlossen und vom Auftraggeber abgenommen (12.11.2026): Quellenabruf, Datenmodell, Redaktionsbereich, Magic Link.
+Phase 2 (KI-Pipeline, Ticker, Review-Warteschlange, Kalibrierung) ist gebaut und mit einer KI-Attrappe getestet;
+der erste Lauf mit echtem API-Schlüssel und die Abnahme stehen aus. Gearbeitet wird in Phasen;
 jede Phase endet mit einer Vorführung und dem Okay des Auftraggebers, bevor die nächste beginnt.
 
 ## Befehle
@@ -28,6 +30,17 @@ Bei Änderungen an der Oberfläche zusätzlich `npm run test:e2e`.
    Proxy ist nur eine Vorprüfung.
 5. **Markenwerte nur in `src/config/site.ts` und den CSS-Variablen in `globals.css`.** Der Stand ist
    bewusst neutral (SPEC E-01).
+
+## KI-Pipeline
+
+- Die KI liefert **Fakten und Texte**, nie die Wichtigkeit. Die Wichtigkeit rechnet `src/lib/scoring/score.ts`
+  aus `src/config/scoring.ts`. Wer ein Gewicht ändert, passt die Testfälle ST-01 bis ST-06 bewusst an.
+- Prompts liegen versioniert unter `/prompts` (`name.vN.md`). Eine inhaltliche Änderung ist eine neue Version,
+  nie eine stille Änderung einer bestehenden Datei; die Version steht in `src/config/ai.ts`.
+- Jeder KI-Aufruf wird in `ai_runs` protokolliert (Modell, Prompt-Version, Tokens, Fehler).
+- Tests rufen nie die echte API auf; sie verwenden eine Attrappe von `AiClient`.
+- Nichts wird ohne bestandene Prüfung automatisch veröffentlicht (`src/lib/pipeline/decide.ts`).
+- Vorläufige Werte stehen in `src/config/config-status.ts`; neue vorläufige Werte dort eintragen.
 
 ## Verbote
 

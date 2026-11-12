@@ -18,7 +18,7 @@ class ScriptedAi implements AiClient {
   constructor(private script: { analyse: (Analysis | Error)[]; pruefung: (CheckResult | Error)[] }) {}
 
   async structured<S extends z.ZodType>(request: StructuredRequest<S>): Promise<AiCallResult<z.infer<S>>> {
-    const kind = request.schema === analysisSchema ? "analyse" : "pruefung";
+    const kind = (request.schema as unknown) === analysisSchema ? "analyse" : "pruefung";
     this.calls.push({ kind, user: request.user });
     const next = this.script[kind].shift();
     if (!next) throw new Error(`Keine vorbereitete Antwort für ${kind}`);

@@ -28,3 +28,21 @@ export function rawTone(status: RawStatus): Tone {
       return "error";
   }
 }
+
+export function storyTone(status: import("@/config/taxonomy").StoryStatus): Tone {
+  switch (status) {
+    case "published":
+      return "ok";
+    case "in_review":
+      return "warn";
+    case "blocked":
+      return "error";
+    default:
+      return "neutral";
+  }
+}
+
+export function actionTone(level: import("@/config/taxonomy").ActionLevel | null): Tone {
+  if (level === "handeln") return "warn";
+  return "neutral";
+}

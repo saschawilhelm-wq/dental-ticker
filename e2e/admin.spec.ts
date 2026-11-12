@@ -96,3 +96,37 @@ test("ein Konto ohne Admin-Rolle kommt nicht in den Admin-Bereich", async ({ pag
   await login(page, "team@praxis.example");
   await expect(page).toHaveURL(/\/kein-zugang$/);
 });
+
+test("Ticker zeigt ausgewertete Meldungen, die Prüfung führt zur Freigabe", async ({ page }) => {
+  await login(page, "admin@praxis.example");
+  await page.goto("/admin/ticker");
+  await expect(page.getByRole("link", { name: "Testmeldung: Konnektor-Update wird Pflicht" })).toBeVisible();
+  await expect(page.getByText("Warum:").first()).toBeVisible();
+
+  await page.goto("/admin/pruefung");
+  await expect(page.getByText("1 Meldung wartet")).toBeVisible();
+  await page.getByRole("link", { name: "Testmeldung: Neue Punktwerte angekündigt" }).click();
+  await expect(page.getByText("Datum steht nicht in der Quelle.")).toBeVisible();
+
+  await page.getByLabel("Überschrift").fill("Punktwerte 2027: Verhandlungen laufen noch");
+  await page.getByLabel("Frist").fill("");
+  await page.getByRole("button", { name: "Änderungen speichern" }).click();
+  await expect(page.getByText("Änderungen gespeichert")).toBeVisible();
+
+  await page.getByRole("button", { name: "Freigeben" }).click();
+  await expect(page.getByText("Zuletzt entschieden von admin@praxis.example")).toBeVisible();
+
+  await page.goto("/admin/pruefung");
+  await expect(page.getByText("Nichts zu prüfen.")).toBeVisible();
+});
+
+test("Redaktion kann eine Einschätzung zur Kalibrierung speichern", async ({ page }) => {
+  await login(page, "admin@praxis.example");
+  await page.goto("/admin/ticker");
+  await page.getByRole("link", { name: "Testmeldung: Konnektor-Update wird Pflicht" }).click();
+  await page.getByLabel("Wichtigkeit", { exact: true }).selectOption("hoch");
+  await page.getByRole("button", { name: "Einschätzung speichern" }).click();
+  await expect(page.getByRole("button", { name: "Einschätzung ändern" })).toBeVisible();
+  await page.goto("/admin");
+  await expect(page.getByText("1 von 1 Einschätzungen stimmen überein (100 %)")).toBeVisible();
+});

@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { History, LayoutDashboard, Newspaper, Rss, type LucideIcon } from "lucide-react";
+import { ClipboardCheck, History, LayoutDashboard, Newspaper, Rss, Sparkles, type LucideIcon } from "lucide-react";
 
 const items: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin", label: "Übersicht", icon: LayoutDashboard },
-  { href: "/admin/rohdaten", label: "Meldungen", icon: Newspaper },
+  { href: "/admin/ticker", label: "Ticker", icon: Sparkles },
+  { href: "/admin/pruefung", label: "Zur Prüfung", icon: ClipboardCheck },
+  { href: "/admin/rohdaten", label: "Rohdaten", icon: Newspaper },
   { href: "/admin/quellen", label: "Quellen", icon: Rss },
-  { href: "/admin/abrufe", label: "Abrufprotokoll", icon: History },
+  { href: "/admin/abrufe", label: "Protokoll", icon: History },
 ];
 
 /** Aktueller Pfad steht erst zur Laufzeit fest; bis dahin ohne Hervorhebung. */

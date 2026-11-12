@@ -16,8 +16,16 @@ Fertig ist das Fundament für alles Weitere:
 - **Anmeldung per Magic Link** (ohne Passwort, nur für angelegte Konten)
 - PWA-Manifest (installierbar). Push und Service Worker folgen in Phase 3.
 
-Noch **nicht** enthalten (laut Phasenplan): KI-Analyse, Bündelung, Review-Warteschlange (Phase 2),
-Nutzer-Feed, Briefing, Fristen-Kalender (Phase 3), Audio-Briefing (Phase 3b).
+## Stand: Phase 2 gebaut, erster echter KI-Lauf steht aus
+
+- **KI-Pipeline** im Worker: Analyse je Meldung (Zusammenfassung, „Was bedeutet das“, Fakten), Bündelung
+  ähnlicher Meldungen, **Wichtigkeit je Rolle nach festen Gewichten** mit sichtbarer Begründung, zweite
+  KI-Prüfung gegen die Quelle, Veröffentlichung nur nach bestandener Prüfung, sonst **Review-Warteschlange**
+- **Redaktion:** Ticker nach Wichtigkeit, Warteschlange „Zur Prüfung“, Bearbeiten, Freigeben, Sperren,
+  neu analysieren lassen, Einschätzung zur Kalibrierung, KI-Protokoll je Meldung
+- Die KI läuft nur mit Schlüssel in `DENTAL_TICKER_ANTHROPIC_API_KEY`. Test der Verbindung: `npm run ai:check`.
+
+Noch **nicht** enthalten: Nutzer-Feed, Briefing, Fristen-Kalender (Phase 3), Audio-Briefing (Phase 3b).
 
 ## Lokaler Start
 
@@ -50,6 +58,7 @@ Minute nach fälligen Quellen. Mehrere Worker stören sich nicht (Reservierung p
 | `npm run db:migrate` | offene Migrationen einspielen |
 | `npm run db:seed` | Startquellen anlegen bzw. aktualisieren |
 | `npm run admin:create -- <E-Mail>` | Admin-Konto anlegen |
+| `npm run ai:check` | KI-Anbindung mit einer kleinen Anfrage prüfen |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript (strikt) |
 | `npm test` | Unit- und Integrationstests (Vitest) |
@@ -93,3 +102,6 @@ test/, e2e/           Fixtures, Integrations- und Browser-Tests
 - [ ] RKI um Freigabe der RSS-Feeds bitten (robots.txt sperrt `/SiteGlobals/`)
 - [ ] Für BfArM, BZÄK, KZBV klären: RSS vorhanden, Scraping erlaubt, oder manuelle Pflege
 - [ ] Impressum und Datenschutzerklärung
+- [ ] Auftragsverarbeitung mit Anthropic prüfen (Datenschutz, SPEC)
+- [ ] Gewichte kalibrieren: ~50 Meldungen durch die Redaktion bewerten lassen
+- [ ] Alle Punkte in `src/config/config-status.ts` erledigen
