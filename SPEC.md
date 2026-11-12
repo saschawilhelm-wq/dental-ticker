@@ -5,7 +5,7 @@ Abschnitt 2 die ursprüngliche Spezifikation. Bei Widersprüchen gilt Abschnitt 
 
 ---
 
-## 1. Entscheidungen (Stand 11.11.2026)
+## 1. Entscheidungen (Stand 12.11.2026)
 
 | Nr. | Frage | Entscheidung |
 |---|---|---|
@@ -18,6 +18,55 @@ Abschnitt 2 die ursprüngliche Spezifikation. Bei Widersprüchen gilt Abschnitt 
 | E-07 | Anmeldung | **Eigener Magic-Link-Login** statt Supabase Auth: lokal testbar, ohne Anbieterbindung. Token und Sitzungen liegen nur als SHA-256-Hash in der Datenbank. Abweichung vom Technik-Vorschlag, begründet durch E-06. |
 | E-08 | Jobs | **Eigener Node-Worker** (`worker/index.ts`) statt Supabase Edge Functions — wegen Laufzeitgrenzen und weil Phase 3b ffmpeg braucht. |
 | E-09 | Startquellen | G-BA Beschlüsse, G-BA Pressemitteilungen, gematik Newsroom (alle RSS, geprüft). RKI-Feeds liegen unter einem per robots.txt gesperrten Pfad und bleiben inaktiv, bis das RKI zustimmt. BfArM, BZÄK und KZBV bieten kein auffindbares RSS. |
+| E-10 | Themenbreite | Alles, was für den **Dentalbereich** relevant ist: Praxis, Labor, **Dental-Industrie und -Handel** (z. B. Straumann, Nobel Biocare, Depots), **Abrechnungsdienstleister**, **Messen und Fortbildungen**, dazu **Gesundheitspolitik in GKV und PKV**, verständlich aufgeschlüsselt. Rein ärztliche Themen ohne Bezug zur Zahnmedizin fallen heraus. |
+| E-11 | Gestaltung | Warm, ruhig, einladend; nichts soll beim Lesen hetzen. Leinenfarbener Grund, Creme statt Reinweiß, leichte Papieroptik, Serifenschrift für Überschriften. Festgelegt in `src/app/globals.css`. |
+
+### 1.1 Vorschlag: Wie Wichtigkeit entsteht (Grundlage für Phase 2, noch zu bestätigen)
+
+Die KI vergibt **keine freie Wichtigkeitszahl**. Sie beantwortet je Meldung feste, nachprüfbare Fragen;
+die Wichtigkeit errechnet der Code daraus nach festen, dokumentierten Gewichten. Gleiche Antworten
+ergeben immer dieselbe Sortierung.
+
+**Fragen an die KI (Auszug):** Betrifft es Zahnarztpraxen direkt, indirekt oder nicht? Pflicht oder
+Information? Frist (Datum)? Geht es um Geld (Honorar, Punktwert, Kosten, Sanktion)? Verbindlichkeit
+(Entwurf, beschlossen, in Kraft)? Welche Rollen sind betroffen? Ist es eine Unternehmens- oder
+Werbemeldung?
+
+**Gewichtung (Richtung, Zahlen werden gemeinsam festgelegt):**
+
+| Merkmal | Wirkung |
+|---|---|
+| Pflicht mit Frist für Praxen | stark nach oben |
+| Honorar, BEMA, GOZ, Punktwerte | nach oben, besonders für Praxismanagement/Abrechnung |
+| In Kraft statt Entwurf | nach oben |
+| Primärquelle statt Presse | nach oben |
+| Unternehmens- oder Produktmeldung | nach unten, außer Rückruf, Lieferengpass, Preisänderung |
+| Kein Bezug zur Zahnmedizin | fällt heraus |
+
+**Sichtbare Begründung:** Jede Meldung trägt eine Kurzbegründung („Pflicht · Frist 31.03. · betrifft
+Abrechnung“), für Leser und Prüfer.
+
+**Kalibrierung vor Livegang:** Ein Mensch bewertet rund 50 echte Meldungen. Die KI geht erst allein
+live, wenn sie ausreichend oft dasselbe Ergebnis erzielt. Korrekturen der Redaktion werden gespeichert
+und fließen in die Gewichte ein.
+
+**Kategorien (Vorschlag):** Gesundheitspolitik GKV & PKV getrennt von allgemeinem Recht; eigene
+Kategorie „Fortbildung & Veranstaltungen“ (Termine zusätzlich im Kalender); „Industrie & Handel“ für
+Hersteller, Depots und Abrechnungsdienstleister.
+
+**Gesetzes-Radar:** Gesetzesvorhaben als ein Vorgang mit Stand (Referentenentwurf → Kabinett →
+Bundestag → Bundesrat → in Kraft) statt verstreuter Einzelmeldungen; Quelle u. a. die offizielle
+DIP-Schnittstelle des Bundestags.
+
+**Neutralität:** Unternehmensmeldungen werden als solche gekennzeichnet und niedriger gewichtet.
+Veranstalter können Termine später selbst einreichen, statt dass ihre Seiten ausgelesen werden.
+
+### 1.2 Geprüfte Quellenkandidaten
+
+| Kandidat | Ergebnis der Prüfung (12.11.2026) |
+|---|---|
+| dentastico (Hannover), Abrechnungsdienstleister | WordPress-Blog mit RSS-Feed, robots.txt erlaubt den Abruf. Seltene Beiträge (letzter echter Beitrag 2023). Kommerzieller Anbieter: nur als gekennzeichnete Unternehmens- bzw. Fachquelle. |
+| Straumann Group (Schweiz) | Website blockiert automatische Abrufe (HTTP 403). Kein automatischer Abruf; offiziellen Presseverteiler klären oder manuell pflegen. Produktrückrufe für Deutschland kommen ohnehin über das BfArM. |
 
 ---
 
