@@ -4,7 +4,7 @@
  * Wochen-Audio-Briefings. Sie beeinflussen nie Sortierung oder Gewichtung.
  * Ein White-Label-Partner ersetzt diese Liste durch eigene Einträge.
  *
- * Angaben übernommen von parsmedia.info (Stand 12.11.2026).
+ * Angaben übernommen von parsmedia.info (Stand 12.11.2026); Feed von P[e.l.f.] ergänzt am 16.11.2026.
  */
 export type Recommendation = {
   id: string;
@@ -34,7 +34,7 @@ export const recommendations: readonly Recommendation[] = [
     publisher: "parsmedia Praxismarketing",
     teaser: "Der Podcast für einfache und leichte Praxisführung.",
     url: "https://parsmedia.info/p11-podcast/",
-    feedUrl: null,
+    feedUrl: "https://p-elf.podigee.io/feed/mp3",
     label: "Empfehlung in eigener Sache",
   },
 ];
