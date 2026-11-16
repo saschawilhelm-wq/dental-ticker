@@ -33,7 +33,7 @@ async function tick() {
   if (!ai) return;
   try {
     const pipeline = await runPipelineTick({ pool: getPool(), ai, now: () => new Date() });
-    if (pipeline.outcomes.length > 0 || pipeline.skippedBudget) log("pipeline", pipeline);
+    if (pipeline.outcomes.length > 0 || pipeline.skippedBudget || pipeline.ignoredBeforeStart > 0) log("pipeline", pipeline);
   } catch (error) {
     log("pipeline failed", { error: (error as Error).message });
   }

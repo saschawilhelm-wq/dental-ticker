@@ -15,6 +15,12 @@ export const aiConfig = {
   promptVersions: { analyse: "analyse.v1", pruefung: "pruefung.v1" },
   /** So viel Rohtext geht höchstens in die Analyse (Zeichen). */
   maxSourceChars: 12_000,
+  /**
+   * Startpunkt des Tickers (SPEC E-18): Meldungen, die vorher veröffentlicht
+   * wurden, sortiert die Pipeline ohne KI-Aufruf aus. Ein festes Datum, kein
+   * mitlaufendes Fenster: Neue Meldungen sind immer jünger.
+   */
+  analyseFrom: "2026-01-01T00:00:00+01:00",
   /** Kostenbremse: Analysen pro Worker-Takt und pro Kalendertag. */
   maxAnalysesPerTick: 5,
   maxAnalysesPerDay: 200,

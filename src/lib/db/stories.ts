@@ -35,6 +35,18 @@ export type RawItemForAnalysis = {
  * Reserviert neue Einträge für die Analyse (neueste zuerst) und zählt den
  * Versuch hoch. Parallel laufende Worker greifen nicht doppelt zu.
  */
+/** Neue Einträge, die vor `cutoff` veröffentlicht wurden, ohne KI aussortieren. */
+export async function ignoreRawItemsPublishedBefore(cutoff: Date, reason: string, db: Queryable = getPool()) {
+  const rows = await query<{ id: string }>(
+    `UPDATE raw_items SET status = 'ignored', ignore_reason = $2
+      WHERE status = 'new' AND published_at < $1
+      RETURNING id`,
+    [cutoff, reason],
+    db,
+  );
+  return rows.length;
+}
+
 export async function claimRawItemsForAnalysis(limit: number, maxAttempts: number, db: Queryable = getPool()) {
   return query<RawItemForAnalysis>(
     `WITH picked AS (

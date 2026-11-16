@@ -11,6 +11,7 @@ import {
   countAnalysesToday,
   createStory,
   findClusterCandidates,
+  ignoreRawItemsPublishedBefore,
   insertAiRun,
   linkAiRunsToStory,
   markRawError,
@@ -19,7 +20,7 @@ import {
   type RawItemForAnalysis,
   type StoryWrite,
 } from "@/lib/db/stories";
-import { dayKey } from "@/lib/format";
+import { dayKey, formatDate } from "@/lib/format";
 import { scoreStory } from "@/lib/scoring/score";
 import { cleanIsoDate, decidePublication, factsFromAnalysis } from "./decide";
 import { copyOverlap } from "./overlap";
@@ -222,13 +223,21 @@ export async function reanalyzeStory(item: RawItemForAnalysis & { story_id: stri
   }
 }
 
-export type PipelineSummary = { outcomes: ItemOutcome[]; skippedBudget: boolean };
+export type PipelineSummary = { outcomes: ItemOutcome[]; skippedBudget: boolean; ignoredBeforeStart: number };
 
 /** Ein Takt der Pipeline mit Kostenbremse pro Takt und pro Tag. */
 export async function runPipelineTick(deps: PipelineDeps): Promise<PipelineSummary> {
+  // Kostet nichts und läuft daher auch, wenn das Tagesbudget erschöpft ist.
+  const start = new Date(aiConfig.analyseFrom);
+  const ignoredBeforeStart = await ignoreRawItemsPublishedBefore(
+    start,
+    `Vor dem Start des Tickers veröffentlicht (vor dem ${formatDate(start)}), ohne KI aussortiert.`,
+    deps.pool,
+  );
+
   const usedToday = await countAnalysesToday(deps.pool);
   const budget = Math.min(aiConfig.maxAnalysesPerTick, aiConfig.maxAnalysesPerDay - usedToday);
-  if (budget <= 0) return { outcomes: [], skippedBudget: true };
+  if (budget <= 0) return { outcomes: [], skippedBudget: true, ignoredBeforeStart };
 
   const outcomes: ItemOutcome[] = [];
   const reanalyses = await claimStoriesForReanalysis(budget, deps.pool);
@@ -239,5 +248,5 @@ export async function runPipelineTick(deps: PipelineDeps): Promise<PipelineSumma
     const items = await claimRawItemsForAnalysis(remaining, aiConfig.maxAttempts, deps.pool);
     for (const item of items) outcomes.push(await processRawItem(item, deps));
   }
-  return { outcomes, skippedBudget: false };
+  return { outcomes, skippedBudget: false, ignoredBeforeStart };
 }

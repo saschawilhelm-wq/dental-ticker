@@ -59,6 +59,19 @@ describe.skipIf(!testDatabaseUrl)("KI-Pipeline gegen die Datenbank", () => {
     return rows[0].id;
   }
 
+  it("sortiert Meldungen vor dem Startpunkt ohne KI-Aufruf aus", async () => {
+    const oldId = await addRaw("Alte Meldung aus 2025");
+    await pool.query("UPDATE raw_items SET published_at = '2025-12-31T10:00:00Z' WHERE id = $1", [oldId]);
+    const ai = new ScriptedAi({ analyse: [], pruefung: [] });
+    const summary = await runPipelineTick({ pool, ai, now, prompts });
+
+    expect(summary).toMatchObject({ outcomes: [], ignoredBeforeStart: 1 });
+    expect(ai.calls).toHaveLength(0);
+    const { rows } = await pool.query("SELECT status, ignore_reason FROM raw_items WHERE id = $1", [oldId]);
+    expect(rows[0].status).toBe("ignored");
+    expect(rows[0].ignore_reason).toMatch(/Vor dem Start des Tickers/);
+  });
+
   it("legt eine geprüfte Story an, bewertet sie und protokolliert beide KI-Läufe", async () => {
     const rawId = await addRaw("Konnektor-Update Pflicht");
     const ai = new ScriptedAi({ analyse: [sampleAnalysis], pruefung: [passed] });
@@ -173,6 +186,6 @@ describe.skipIf(!testDatabaseUrl)("KI-Pipeline gegen die Datenbank", () => {
     );
     await addRaw("Zu viel heute");
     const result = await runPipelineTick({ pool, ai: new ScriptedAi({ analyse: [], pruefung: [] }), now, prompts });
-    expect(result).toEqual({ outcomes: [], skippedBudget: true });
+    expect(result).toEqual({ outcomes: [], skippedBudget: true, ignoredBeforeStart: 0 });
   });
 });
