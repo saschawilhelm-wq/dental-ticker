@@ -110,7 +110,7 @@ describe.skipIf(!testDatabaseUrl)("KI-Pipeline gegen die Datenbank", () => {
 
     const runs = await pool.query("SELECT kind, prompt_version, model_requested, story_id FROM ai_runs ORDER BY created_at");
     expect(runs.rows.map((r) => [r.kind, r.prompt_version, r.story_id])).toEqual([
-      ["analyse", "analyse.v3", storyId],
+      ["analyse", "analyse.v4", storyId],
       ["pruefung", "pruefung.v2", storyId],
     ]);
 
