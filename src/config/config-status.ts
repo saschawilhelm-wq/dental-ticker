@@ -10,4 +10,5 @@ export const openConfigItems: readonly { id: string; where: string; what: string
   { id: "OC-05", where: "config/ai.ts", what: "Kopierschutz-Schwelle für Fachpresse (20 % gleiche Wortfolgen) bestätigen." },
   { id: "OC-06", where: "config/recommendations.ts", what: "Kennzeichnung „Empfehlung in eigener Sache“ rechtlich prüfen." },
   { id: "OC-07", where: "Kundenansicht (Phase 3)", what: "Kurzer Hinweis im Kleingedruckten, dass Zusammenfassungen KI-unterstützt entstehen; Wortlaut festlegen und rechtlich prüfen (u. a. Transparenzpflicht KI-Verordnung)." },
+  { id: "OC-08", where: "Aufbewahrung (SPEC E-24)", what: "Löschfristen bestätigen: aussortierte Rohmeldungen 90 Tage, veröffentlichte Meldungen 2 Jahre, KI-Protokoll 12 Monate." },
 ];
