@@ -24,7 +24,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`OK — Modell: ${result.modelServed}, Tokens: ${result.inputTokens} rein / ${result.outputTokens} raus`);
+  console.log(`OK — Modell: ${result.modelServed}, Tokens: ${result.inputTokens} rein (+${result.cacheWriteTokens} Cache geschrieben, +${result.cacheReadTokens} Cache gelesen) / ${result.outputTokens} raus`);
   console.log(`Antwort: ${result.output?.antwort}`);
 }
 

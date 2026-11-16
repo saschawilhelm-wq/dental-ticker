@@ -105,6 +105,8 @@ export type AiRunInsert = {
   stopReason: string | null;
   inputTokens: number | null;
   outputTokens: number | null;
+  cacheWriteTokens: number | null;
+  cacheReadTokens: number | null;
   error: string | null;
   durationMs: number;
 };
@@ -112,8 +114,9 @@ export type AiRunInsert = {
 export async function insertAiRun(run: AiRunInsert, db: Queryable = getPool()): Promise<string> {
   const row = await queryOne<{ id: string }>(
     `INSERT INTO ai_runs (kind, raw_item_id, story_id, model_requested, model_served, prompt_version,
-                          input_hash, output, stop_reason, input_tokens, output_tokens, error, duration_ms)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,
+                          input_hash, output, stop_reason, input_tokens, output_tokens,
+                          cache_write_tokens, cache_read_tokens, error, duration_ms)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id`,
     [
       run.kind,
       run.rawItemId,
@@ -126,6 +129,8 @@ export async function insertAiRun(run: AiRunInsert, db: Queryable = getPool()): 
       run.stopReason,
       run.inputTokens,
       run.outputTokens,
+      run.cacheWriteTokens,
+      run.cacheReadTokens,
       run.error,
       run.durationMs,
     ],
@@ -405,12 +410,14 @@ export async function getAiRuns(storyId: string, db: Queryable = getPool()) {
     stop_reason: string | null;
     input_tokens: number | null;
     output_tokens: number | null;
+    cache_write_tokens: number | null;
+    cache_read_tokens: number | null;
     error: string | null;
     duration_ms: number | null;
     created_at: Date;
   }>(
     `SELECT id, kind, model_requested, model_served, prompt_version, stop_reason, input_tokens, output_tokens,
-            error, duration_ms, created_at
+            cache_write_tokens, cache_read_tokens, error, duration_ms, created_at
        FROM ai_runs WHERE story_id = $1 ORDER BY created_at DESC`,
     [storyId],
     db,

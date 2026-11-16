@@ -29,6 +29,7 @@ import { getAiRuns, getAssessment, getRoleScores, getStory, getStorySources } fr
 import { formatDate, formatDateTime, hostOf } from "@/lib/format";
 import { isUuid } from "@/lib/validation/filters";
 import { ImportanceMark } from "../../story-card";
+import { estimateCostUsd, totalInputTokens } from "@/lib/ai/cost";
 import { actionTone, storyTone } from "../../status";
 import { assessmentAction, decideStoryAction, reanalyzeAction } from "../actions";
 import { EditorialForm } from "../editorial-form";
@@ -154,7 +155,11 @@ async function StoryDetail({ params }: { params: PageProps<"/admin/ticker/[id]">
                 <span className="text-muted">{formatDateTime(run.created_at)}</span>
                 <span className="text-muted">Prompt {run.prompt_version}</span>
                 <span className="text-muted">Modell {run.model_served ?? run.model_requested}</span>
-                {run.input_tokens !== null ? <span className="text-muted">{run.input_tokens} / {run.output_tokens} Tokens</span> : null}
+                {run.input_tokens !== null ? (
+                  <span className="text-muted">
+                    {totalInputTokens(run)} / {run.output_tokens} Tokens · ca. {estimateCostUsd(run).toFixed(3)} $
+                  </span>
+                ) : null}
                 {run.error ? <span className="text-error">{run.error}</span> : null}
               </li>
             ))}

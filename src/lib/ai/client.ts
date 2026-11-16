@@ -7,8 +7,13 @@ export type AiCallResult<T> = {
   output: T | null;
   modelServed: string | null;
   stopReason: string | null;
+  /** Nicht zwischengespeicherte Eingabe-Tokens (voller Preis). */
   inputTokens: number | null;
   outputTokens: number | null;
+  /** Eingabe, die in den Zwischenspeicher geschrieben wurde (Aufpreis 25 %). */
+  cacheWriteTokens: number | null;
+  /** Eingabe, die aus dem Zwischenspeicher kam (10 % des Preises). */
+  cacheReadTokens: number | null;
   error: string | null;
 };
 
@@ -46,7 +51,7 @@ export class ClaudeClient implements AiClient {
   }
 
   async structured<S extends z.ZodType>(request: StructuredRequest<S>): Promise<AiCallResult<z.infer<S>>> {
-    const empty = { output: null, modelServed: null, stopReason: null, inputTokens: null, outputTokens: null };
+    const empty = { output: null, modelServed: null, stopReason: null, inputTokens: null, outputTokens: null, cacheWriteTokens: null, cacheReadTokens: null };
     try {
       const response = await this.client.beta.messages.parse({
         model: this.model,
@@ -62,6 +67,9 @@ export class ClaudeClient implements AiClient {
         stopReason: response.stop_reason,
         inputTokens: response.usage.input_tokens,
         outputTokens: response.usage.output_tokens,
+        // Der Systemprompt wird zwischengespeichert; diese Anteile zählt input_tokens nicht mit.
+        cacheWriteTokens: response.usage.cache_creation_input_tokens ?? 0,
+        cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
       };
       if (response.stop_reason === "refusal") {
         return { ...base, output: null, error: `Abgelehnt (${response.stop_details?.category ?? "ohne Kategorie"})` };

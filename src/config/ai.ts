@@ -28,4 +28,9 @@ export const aiConfig = {
    */
   maxCopyOverlap: 0.2,
   headlineMaxChars: 90,
+  /**
+   * Listenpreise in US-Dollar pro Million Tokens, nur für die Kostenanzeige.
+   * Zwischenspeicher: Schreiben 1,25-fach, Lesen 0,1-fach des Eingabepreises.
+   */
+  priceUsdPerMTok: { input: 4, output: 20, cacheWrite: 5, cacheRead: 0.4 },
 } as const;

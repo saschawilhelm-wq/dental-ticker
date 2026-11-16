@@ -22,7 +22,7 @@ class ScriptedAi implements AiClient {
     this.calls.push({ kind, user: request.user });
     const next = this.script[kind].shift();
     if (!next) throw new Error(`Keine vorbereitete Antwort für ${kind}`);
-    const usage = { modelServed: "test-model", stopReason: "end_turn", inputTokens: 100, outputTokens: 50 };
+    const usage = { modelServed: "test-model", stopReason: "end_turn", inputTokens: 100, outputTokens: 50, cacheWriteTokens: 0, cacheReadTokens: 0 };
     if (next instanceof Error) return { ...usage, output: null, error: next.message };
     return { ...usage, output: next as z.infer<S>, error: null };
   }
