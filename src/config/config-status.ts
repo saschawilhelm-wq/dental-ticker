@@ -9,4 +9,5 @@ export const openConfigItems: readonly { id: string; where: string; what: string
   { id: "OC-04", where: "lib/auth/mailer.ts", what: "E-Mail-Versand für Login-Links einrichten." },
   { id: "OC-05", where: "config/ai.ts", what: "Kopierschutz-Schwelle für Fachpresse (20 % gleiche Wortfolgen) bestätigen." },
   { id: "OC-06", where: "config/recommendations.ts", what: "Kennzeichnung „Empfehlung in eigener Sache“ rechtlich prüfen." },
+  { id: "OC-07", where: "Kundenansicht (Phase 3)", what: "Kurzer Hinweis im Kleingedruckten, dass Zusammenfassungen KI-unterstützt entstehen; Wortlaut festlegen und rechtlich prüfen (u. a. Transparenzpflicht KI-Verordnung)." },
 ];
