@@ -72,6 +72,17 @@ describe.skipIf(!testDatabaseUrl)("KI-Pipeline gegen die Datenbank", () => {
     expect(rows[0].ignore_reason).toMatch(/Vor dem Start des Tickers/);
   });
 
+  it("sortiert eine Meldung mit abgelaufener Frist ohne Prüfung aus", async () => {
+    const rawId = await addRaw("Kartentausch bis Juni");
+    const ai = new ScriptedAi({ analyse: [{ ...sampleAnalysis, frist: "2026-06-30" }], pruefung: [] });
+    const { outcomes } = await runPipelineTick({ pool, ai, now, prompts });
+
+    expect(outcomes).toEqual([{ rawItemId: rawId, result: "ignored", reason: "Frist bereits abgelaufen" }]);
+    expect(ai.calls.map((c) => c.kind)).toEqual(["analyse"]);
+    const { rows } = await pool.query("SELECT status, ignore_reason FROM raw_items WHERE id = $1", [rawId]);
+    expect(rows[0]).toMatchObject({ status: "ignored", ignore_reason: "Frist bereits abgelaufen (30.06.2026)." });
+  });
+
   it("legt eine geprüfte Story an, bewertet sie und protokolliert beide KI-Läufe", async () => {
     const rawId = await addRaw("Konnektor-Update Pflicht");
     const ai = new ScriptedAi({ analyse: [sampleAnalysis], pruefung: [passed] });
@@ -100,7 +111,7 @@ describe.skipIf(!testDatabaseUrl)("KI-Pipeline gegen die Datenbank", () => {
     const runs = await pool.query("SELECT kind, prompt_version, model_requested, story_id FROM ai_runs ORDER BY created_at");
     expect(runs.rows.map((r) => [r.kind, r.prompt_version, r.story_id])).toEqual([
       ["analyse", "analyse.v1", storyId],
-      ["pruefung", "pruefung.v1", storyId],
+      ["pruefung", "pruefung.v2", storyId],
     ]);
 
     const scores = await pool.query("SELECT role, score FROM story_role_scores WHERE story_id = $1 ORDER BY role", [storyId]);

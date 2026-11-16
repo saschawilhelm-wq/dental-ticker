@@ -145,6 +145,14 @@ describe("Prompts", () => {
     );
     expect(message).toContain("<quelltext>\naaaaaaaaaa\n</quelltext>");
     expect(message).toContain("- ID abc: Ähnlich (2026-11-09)");
-    expect(checkUserMessage("Quelle", "Titel", sampleAnalysis, 100)).toContain('"frist": "2027-01-31"');
+    const check = checkUserMessage(
+      { name: "gematik", publishedAt: "2026-11-02", url: "https://g.example/a", title: "Titel" },
+      "Quelle",
+      sampleAnalysis,
+      100,
+    );
+    expect(check).toContain('"frist": "2027-01-31"');
+    expect(check).toContain("Quelle (Herausgeber): gematik");
+    expect(check).toContain("Veröffentlicht: 2026-11-02");
   });
 });

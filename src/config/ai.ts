@@ -12,7 +12,7 @@ export const aiConfig = {
   fallbackBeta: "server-side-fallback-2026-07-01",
   effort: { analyse: "medium", pruefung: "high" },
   maxTokens: { analyse: 8000, pruefung: 6000 },
-  promptVersions: { analyse: "analyse.v1", pruefung: "pruefung.v1" },
+  promptVersions: { analyse: "analyse.v1", pruefung: "pruefung.v2" },
   /** So viel Rohtext geht höchstens in die Analyse (Zeichen). */
   maxSourceChars: 12_000,
   /**

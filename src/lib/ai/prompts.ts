@@ -52,7 +52,9 @@ export function analysisUserMessage(input: AnalysisInput, maxChars: number): str
   ].join("\n");
 }
 
-export function checkUserMessage(sourceText: string, title: string, analysis: Analysis, maxChars: number): string {
+export type CheckSource = { name: string; publishedAt: string | null; url: string; title: string };
+
+export function checkUserMessage(source: CheckSource, sourceText: string, analysis: Analysis, maxChars: number): string {
   const reviewed = {
     headline: analysis.headline,
     summary: analysis.summary,
@@ -65,7 +67,12 @@ export function checkUserMessage(sourceText: string, title: string, analysis: An
     termin: analysis.termin,
   };
   return [
-    `Titel der Quelle: ${title}`,
+    // Herausgeber und Datum gehören zu den Belegen: Ohne sie beanstandet die
+    // Prüfung etwa „laut gematik“ bei Meldungen aus dem gematik-Newsroom.
+    `Quelle (Herausgeber): ${source.name}`,
+    `Veröffentlicht: ${source.publishedAt ?? "unbekannt"}`,
+    `Adresse: ${source.url}`,
+    `Titel der Quelle: ${source.title}`,
     "",
     "<quelltext>",
     sourceText.slice(0, maxChars) || "(kein Text, nur Titel)",

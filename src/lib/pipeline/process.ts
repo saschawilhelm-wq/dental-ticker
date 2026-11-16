@@ -98,7 +98,17 @@ async function runAnalysis(item: RawItemForAnalysis, candidates: { id: string; h
 
 async function runCheck(item: RawItemForAnalysis, analysis: Analysis, deps: PipelineDeps) {
   const system = prompts(deps).pruefung;
-  const user = checkUserMessage(item.raw_text ?? "", item.title, analysis, aiConfig.maxSourceChars);
+  const user = checkUserMessage(
+    {
+      name: item.source_name,
+      publishedAt: item.published_at ? dayKey(new Date(item.published_at)) : null,
+      url: item.url,
+      title: item.title,
+    },
+    item.raw_text ?? "",
+    analysis,
+    aiConfig.maxSourceChars,
+  );
   const started = Date.now();
   const result = await deps.ai.structured({
     schema: checkSchema,
@@ -189,6 +199,13 @@ export async function processRawItem(item: RawItemForAnalysis, deps: PipelineDep
     if (analysis.betroffenheit === "keine") {
       await markRawIgnored(item.id, `Kein Bezug: ${analysis.betroffenheit_begruendung}`, deps.pool);
       return { rawItemId: item.id, result: "ignored", reason: analysis.betroffenheit_begruendung };
+    }
+
+    // SPEC E-19: Eine Meldung, deren Frist schon abgelaufen ist, kommt nicht mehr in den Ticker.
+    const frist = cleanIsoDate(analysis.frist);
+    if (frist && frist < dayKey(deps.now())) {
+      await markRawIgnored(item.id, `Frist bereits abgelaufen (${formatDate(new Date(`${frist}T12:00:00Z`))}).`, deps.pool);
+      return { rawItemId: item.id, result: "ignored", reason: "Frist bereits abgelaufen" };
     }
 
     const sameEvent = analysis.gleiches_ereignis_wie;
