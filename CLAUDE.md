@@ -45,7 +45,7 @@ Bei Änderungen an der Oberfläche zusätzlich `npm run test:e2e`.
 ## Verbote
 
 - Keine Volltexte oder längeren Zitate aus Fachpresse für Nutzer speichern oder anzeigen.
-- Keine Quelle abrufen, deren robots.txt den Pfad sperrt. Kein HTML-Scraping ohne geprüfte Erlaubnis.
+- Keine Quelle abrufen, deren robots.txt den Pfad sperrt – außer die Quelle ist im Admin ausdrücklich nach SPEC E-20 freigegeben. Kein HTML-Scraping ohne geprüfte Erlaubnis.
 - Login-Links und Token nie im Produktivbetrieb loggen.
 - Keine Inhalte aus Quellen als HTML rendern — immer als Text.
 - Keine personenbezogenen Daten in Anfragen an Quellen (User-Agent ohne private Kontaktadresse).
