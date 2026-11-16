@@ -12,7 +12,7 @@ export const aiConfig = {
   fallbackBeta: "server-side-fallback-2026-07-01",
   effort: { analyse: "medium", pruefung: "high" },
   maxTokens: { analyse: 8000, pruefung: 6000 },
-  promptVersions: { analyse: "analyse.v1", pruefung: "pruefung.v2" },
+  promptVersions: { analyse: "analyse.v2", pruefung: "pruefung.v2" },
   /** So viel Rohtext geht höchstens in die Analyse (Zeichen). */
   maxSourceChars: 12_000,
   /**
@@ -27,7 +27,7 @@ export const aiConfig = {
   /** Nach so vielen Fehlversuchen bleibt ein Eintrag mit Status „Fehler“ liegen. */
   maxAttempts: 3,
   /** Kandidaten für „gleiches Ereignis“: Titelähnlichkeit und Zeitfenster. */
-  clustering: { minSimilarity: 0.3, windowDays: 21, maxCandidates: 5 },
+  clustering: { minSimilarity: 0.15, windowDays: 21, maxCandidates: 8 },
   /**
    * Fachpresse: Anteil gleicher Wortfolgen (5 Wörter) zwischen Zusammenfassung
    * und Quelle, ab dem die Meldung zur Prüfung geht (keine Übernahmen, SPEC).

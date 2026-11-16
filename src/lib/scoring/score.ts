@@ -6,6 +6,7 @@ import {
   type Bindingness,
   type MoneyKind,
   type Obligation,
+  type ReportKind,
   type Role,
 } from "@/config/taxonomy";
 
@@ -20,6 +21,8 @@ export type StoryFacts = {
   roles: Role[];
   companyNews: boolean;
   safety: boolean;
+  /** Art der Meldung, z. B. Regelung oder Veranstaltung. */
+  reportKind: ReportKind;
 };
 
 export type ScoreContext = {
@@ -82,10 +85,18 @@ export function scoreStory(facts: StoryFacts, ctx: ScoreContext): ScoreResult {
   if (facts.money === "kosten") reasons.push("Kosten für die Praxis");
   if (facts.money === "sanktion") reasons.push("Sanktion möglich");
 
-  points += w.bindingness[facts.bindingness];
-  if (facts.bindingness === "in_kraft") reasons.push("In Kraft");
-  if (facts.bindingness === "beschlossen") reasons.push("Beschlossen");
-  if (facts.bindingness === "entwurf") reasons.push("Erst Entwurf");
+  // Der Stand zählt nur bei Regelungen und Urteilen, nicht bei Berichten darüber.
+  const binding = w.bindingKinds.includes(facts.reportKind) ? facts.bindingness : "nicht_anwendbar";
+  points += w.bindingness[binding];
+  if (binding === "in_kraft") reasons.push("In Kraft");
+  if (binding === "beschlossen") reasons.push("Beschlossen");
+  if (binding === "entwurf") reasons.push("Erst Entwurf");
+
+  points += w.reportKind[facts.reportKind];
+  if (facts.reportKind === "urteil") reasons.push("Urteil");
+  if (facts.reportKind === "veranstaltung") reasons.push("Veranstaltung");
+  if (facts.reportKind === "fachbeitrag") reasons.push("Fachbeitrag");
+  if (facts.reportKind === "bericht") reasons.push("Bericht");
 
   if (ctx.trustLevel === "A") points += w.primarySource;
 
@@ -104,9 +115,9 @@ export function scoreStory(facts: StoryFacts, ctx: ScoreContext): ScoreResult {
   const importance = Math.max(...primaryRoles.map((role) => roleScores[role]));
 
   let actionLevel: ActionLevel = "keiner";
-  if (facts.obligation === "pflicht" && (deadlineUpcoming || facts.bindingness === "in_kraft")) actionLevel = "handeln";
+  if (facts.obligation === "pflicht" && (deadlineUpcoming || binding === "in_kraft")) actionLevel = "handeln";
   else if (facts.safety) actionLevel = "handeln";
-  else if (facts.obligation === "empfehlung" || facts.bindingness === "entwurf" || facts.bindingness === "beschlossen") {
+  else if (facts.obligation === "empfehlung" || binding === "entwurf" || binding === "beschlossen") {
     actionLevel = "beobachten";
   }
 

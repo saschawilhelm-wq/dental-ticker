@@ -153,6 +153,25 @@ export const obligations = ["pflicht", "empfehlung", "information"] as const;
 export type Obligation = (typeof obligations)[number];
 export const moneyKinds = ["honorar", "kosten", "sanktion", "keins"] as const;
 export type MoneyKind = (typeof moneyKinds)[number];
+export const reportKinds = [
+  "regelung",
+  "urteil",
+  "warnung",
+  "praxishinweis",
+  "fachbeitrag",
+  "veranstaltung",
+  "bericht",
+] as const;
+export type ReportKind = (typeof reportKinds)[number];
+export const reportKindLabels: Record<ReportKind, string> = {
+  regelung: "Regelung",
+  urteil: "Urteil",
+  warnung: "Warnung",
+  praxishinweis: "Praxishinweis",
+  fachbeitrag: "Fachbeitrag",
+  veranstaltung: "Veranstaltung",
+  bericht: "Bericht",
+};
 export const bindingness = ["entwurf", "beschlossen", "in_kraft", "nicht_anwendbar"] as const;
 export type Bindingness = (typeof bindingness)[number];
 export const bindingnessLabels: Record<Bindingness, string> = {

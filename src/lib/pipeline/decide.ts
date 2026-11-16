@@ -16,6 +16,7 @@ export function factsFromAnalysis(a: Analysis): StoryFacts {
     roles: [...new Set(a.rollen)],
     companyNews: a.unternehmensmeldung,
     safety: a.sicherheit_rueckruf,
+    reportKind: a.meldungsart,
   };
 }
 

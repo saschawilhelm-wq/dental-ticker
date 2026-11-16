@@ -4,6 +4,7 @@ import {
   bindingness,
   categories,
   certainties,
+  reportKinds,
   moneyKinds,
   obligations,
   roles,
@@ -23,6 +24,11 @@ export const analysisSchema = z.object({
   summary: z.string().describe("Genau drei Sätze in eigenen Worten. Keine wörtlichen Übernahmen."),
   was_bedeutet_das: z.string().describe("Ein bis zwei Sätze: konkrete Auswirkung auf die Praxis."),
   kategorie: z.enum(categories),
+  meldungsart: z
+    .enum(reportKinds)
+    .describe(
+      "regelung = Gesetz, Verordnung, Richtlinie, Beschluss, Vertrag, verbindliche Vorgabe; urteil = Gerichtsentscheidung; warnung = Rückruf, Sicherheitswarnung, Störung, Lieferengpass; praxishinweis = konkreter Hinweis für den Praxisalltag; fachbeitrag = Fachartikel, Studie, Leitlinie; veranstaltung = Kongress, Messe, Webinar, Tagungsbericht; bericht = Hintergrund, Statistik, Interview, Personalie, Verbandsnachricht.",
+    ),
   verpflichtung: z.enum(obligations).describe("Muss eine Praxis etwas tun (pflicht), wird etwas empfohlen, oder ist es nur Information?"),
   frist: z.string().nullable().describe("Frist für Praxen als YYYY-MM-DD, nur wenn ausdrücklich in der Quelle genannt, sonst null."),
   frist_beschreibung: z.string().nullable().describe("Was bis zur Frist zu tun ist, sonst null."),
@@ -30,7 +36,9 @@ export const analysisSchema = z.object({
   verbindlichkeit: z.enum(bindingness).describe("Stand bei Regelungen: Entwurf, beschlossen, in Kraft; sonst nicht_anwendbar."),
   rollen: z.array(z.enum(roles)).describe("Welche Rollen sind ausdrücklich betroffen?"),
   unternehmensmeldung: z.boolean().describe("Stammt die Meldung von einem Unternehmen über eigene Produkte oder Angebote?"),
-  sicherheit_rueckruf: z.boolean().describe("Rückruf, Sicherheitswarnung oder Lieferengpass?"),
+  sicherheit_rueckruf: z
+    .boolean()
+    .describe("Nur bei akutem Rückruf, Sicherheitswarnung, Störung oder Lieferengpass. Planmäßige Umstellungen (z. B. Kartentausch) sind keine."),
   termin: z.string().nullable().describe("Veranstaltungsdatum als YYYY-MM-DD bei Messen/Fortbildungen, sonst null."),
   sicherheit: z.enum(certainties).describe("offiziell = Primärquelle selbst; berichtet = Presse; unbestaetigt = Gerücht/Ankündigung."),
   gleiches_ereignis_wie: z

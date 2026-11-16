@@ -1,4 +1,4 @@
-import type { Bindingness, MoneyKind, Obligation, Role } from "./taxonomy";
+import type { Bindingness, MoneyKind, Obligation, ReportKind, Role } from "./taxonomy";
 
 /**
  * Gewichte für die Wichtigkeit einer Meldung (SPEC 1.1).
@@ -24,6 +24,21 @@ export const scoringWeights = {
   safety: 20,
   /** Reine Unternehmens- oder Produktmeldung (außer Sicherheit). */
   companyNews: -20,
+  /**
+   * Zu- und Abschläge nach Art der Meldung (SPEC E-21). Kongresse und Berichte
+   * informieren, verpflichten aber zu nichts.
+   */
+  reportKind: {
+    regelung: 0,
+    urteil: 0,
+    warnung: 0,
+    praxishinweis: 0,
+    fachbeitrag: -5,
+    veranstaltung: -20,
+    bericht: -10,
+  } satisfies Record<ReportKind, number>,
+  /** Nur bei diesen Arten zählt der Stand (Entwurf, beschlossen, in Kraft). */
+  bindingKinds: ["regelung", "urteil"] as readonly ReportKind[],
   /** Anteil für Rollen, die laut KI nicht ausdrücklich betroffen sind. */
   otherRoleFactor: 0.5,
 } as const;

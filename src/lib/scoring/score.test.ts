@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { importanceBand, scoreStory, type StoryFacts } from "./score";
 
 /*
- * Testfälle zur Gewichtung (ST-01 bis ST-06). Wer in config/scoring.ts ein
+ * Testfälle zur Gewichtung (ST-01 bis ST-08). Wer in config/scoring.ts ein
  * Gewicht ändert, passt diese Erwartungen bewusst mit an — ein stillschweigend
  * angepasster Test verdeckt eine Verhaltensänderung.
  */
@@ -17,6 +17,7 @@ const base: StoryFacts = {
   roles: ["zahnarzt", "team"],
   companyNews: false,
   safety: false,
+  reportKind: "regelung",
 };
 
 describe("scoreStory", () => {
@@ -89,5 +90,25 @@ describe("scoreStory", () => {
   it("ist deterministisch", () => {
     const facts = { ...base, obligation: "pflicht" as const, deadline: "2027-06-30" };
     expect(scoreStory(facts, { trustLevel: "A", today })).toEqual(scoreStory(facts, { trustLevel: "A", today }));
+  });
+  it("ST-07: Tagungsbericht über Honorarthemen bleibt unter „mittel“", () => {
+    const result = scoreStory(
+      { ...base, reportKind: "veranstaltung", money: "honorar", bindingness: "in_kraft" },
+      { trustLevel: "B", today },
+    );
+    // 45 + 0 + 12 + 0 (Stand zählt nicht bei Veranstaltungen) − 20 = 37
+    expect(result.importance).toBe(37);
+    expect(result.reasons).toEqual(["Betrifft Praxen direkt", "Honorar/Abrechnung", "Veranstaltung"]);
+    expect(importanceBand(result.importance)).toBe("niedrig");
+  });
+
+  it("ST-08: Urteil zählt mit Stand, ein Bericht darüber nicht", () => {
+    const urteil = scoreStory({ ...base, reportKind: "urteil", bindingness: "in_kraft" }, { trustLevel: "B", today });
+    const bericht = scoreStory({ ...base, reportKind: "bericht", bindingness: "in_kraft" }, { trustLevel: "B", today });
+    // Urteil: 45 + 10 = 55; Bericht: 45 − 10 = 35
+    expect(urteil.importance).toBe(55);
+    expect(urteil.reasons).toContain("Urteil");
+    expect(bericht.importance).toBe(35);
+    expect(bericht.reasons).not.toContain("In Kraft");
   });
 });

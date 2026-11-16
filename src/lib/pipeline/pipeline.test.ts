@@ -19,6 +19,7 @@ export const sampleAnalysis: Analysis = {
   rollen: ["zahnarzt", "team", "team"],
   unternehmensmeldung: false,
   sicherheit_rueckruf: false,
+  meldungsart: "regelung",
   termin: null,
   sicherheit: "offiziell",
   gleiches_ereignis_wie: null,
@@ -90,6 +91,7 @@ describe("factsFromAnalysis und cleanIsoDate", () => {
       roles: ["zahnarzt", "team"],
       companyNews: false,
       safety: false,
+      reportKind: "regelung",
     });
   });
 
