@@ -58,6 +58,7 @@ async function runAnalysis(item: RawItemForAnalysis, candidates: { id: string; h
       sourceName: item.source_name,
       sourceKind: item.source_kind,
       trustLevel: item.trust_level,
+      isNetwork: item.is_network,
       url: item.url,
       publishedAt: item.published_at ? new Date(item.published_at).toISOString().slice(0, 10) : null,
       text: item.raw_text,

@@ -147,6 +147,12 @@ describe("Prompts", () => {
     );
     expect(message).toContain("<quelltext>\naaaaaaaaaa\n</quelltext>");
     expect(message).toContain("- ID abc: Ähnlich (2026-11-09)");
+    expect(message).not.toContain("Netzwerk");
+    const network = analysisUserMessage(
+      { title: "T", sourceName: "parsmedia", sourceKind: "press", trustLevel: "B", isNetwork: true, url: "https://p.example", publishedAt: null, text: "x", candidates: [] },
+      100,
+    );
+    expect(network).toContain("Quelle: parsmedia (press, Vertrauensstufe B, Partner aus unserem Netzwerk)");
     const check = checkUserMessage(
       { name: "gematik", publishedAt: "2026-11-02", url: "https://g.example/a", title: "Titel" },
       "Quelle",

@@ -21,6 +21,8 @@ export type AnalysisInput = {
   sourceName: string;
   sourceKind: string;
   trustLevel: string;
+  /** Quelle aus unserem Netzwerk (SPEC E-16, E-26): darf mit Namen genannt werden. */
+  isNetwork?: boolean;
   url: string;
   publishedAt: string | null;
   text: string | null;
@@ -38,7 +40,7 @@ export function analysisUserMessage(input: AnalysisInput, maxChars: number): str
       ? "Keine."
       : input.candidates.map((c) => `- ID ${c.id}: ${c.headline}${c.date ? ` (${c.date})` : ""}`).join("\n");
   return [
-    `Quelle: ${input.sourceName} (${input.sourceKind}, Vertrauensstufe ${input.trustLevel})`,
+    `Quelle: ${input.sourceName} (${input.sourceKind}, Vertrauensstufe ${input.trustLevel}${input.isNetwork ? ", Partner aus unserem Netzwerk" : ""})`,
     `Veröffentlicht: ${input.publishedAt ?? "unbekannt"}`,
     `Adresse: ${input.url}`,
     `Titel: ${input.title}`,

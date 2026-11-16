@@ -24,6 +24,7 @@ export const categories = [
   "markt_industrie",
   "fortbildung",
   "standespolitik",
+  "praxismarketing",
 ] as const;
 export type Category = (typeof categories)[number];
 export const categoryLabels: Record<Category, string> = {
@@ -37,6 +38,7 @@ export const categoryLabels: Record<Category, string> = {
   markt_industrie: "Industrie & Handel",
   fortbildung: "Fortbildung & Veranstaltungen",
   standespolitik: "Standespolitik",
+  praxismarketing: "Praxismarketing",
 };
 
 /** AT und CH sind im Datenmodell vorgesehen; zum Start wird nur DE befüllt. */
@@ -110,6 +112,8 @@ export const categoryHints: Record<Category, string> = {
   markt_industrie: "Hersteller, Depots, Großhandel, Dienstleister, Produkte, Übernahmen",
   fortbildung: "Messen, Kongresse, Fortbildungen, Veranstaltungen",
   standespolitik: "BZÄK, KZBV, Kammern, KZVen, Wahlen, Verbandspositionen",
+  praxismarketing:
+    "Sichtbarkeit der Praxis: Website, Google-Profil und Bewertungen, Social Media, Video, Patientenkommunikation, Personalgewinnung (Employer Branding), Werberecht für Zahnärzte (HWG, Berufsordnung)",
 };
 
 export const actionLevels = ["keiner", "beobachten", "handeln"] as const;
